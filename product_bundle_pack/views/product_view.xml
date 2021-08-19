@@ -74,6 +74,7 @@
             <field name="domain">[('is_pack', '=', True)]</field>
             <field name="context">{'default_is_pack':True}</field>
 
+
             <field name="view_mode">kanban,tree,form</field>
         </record>
 
