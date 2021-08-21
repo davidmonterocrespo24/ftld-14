@@ -61,7 +61,7 @@ Authorization).</b>
                       </div>
         </xpath>
     </template>
-    <template id="external_layout_standard_custom" inherit_id="web.external_layout_standard">
+    <!--template id="external_layout_standard_custom" inherit_id="web.external_layout_standard">
         <xpath expr="//div[hasclass('o_standard_footer')]/div/div" position="after">
             <div class="text-center" style="border-top: 1px solid black;">
                 <ul class="list-inline mb4 text-nowrap">
@@ -70,5 +70,5 @@ Authorization).</b>
                 </ul>
             </div>
         </xpath>
-    </template>
+    </template-->
 </odoo>
