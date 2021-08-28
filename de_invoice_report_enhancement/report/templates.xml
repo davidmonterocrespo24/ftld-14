@@ -4,7 +4,7 @@
         <xpath expr="/t/t/div/p[1]" position="replace">
             <br></br><br></br>
              <p style = "page-break-after: always;">
-                 <b>Please use the following communication for your payment : &#32; <span><t t-esc="docs.number"/></span></b><br/>
+                 <b>Please use the following communication for your payment : &#32; <span><t t-esc="docs.name"/></span></b><br/>
                     <t t-if="o.payment_term_id">
                     <span>Payment Terms:&#32;<t t-esc="docs.payment_term_id.name"/></span>
                     </t>
@@ -15,8 +15,8 @@
                                     
                                     <h5><b><u>How to pay</u>&#32;:</b></h5>
                                     <b>- <u> E-Transfer</u>&#32;:</b> Please send the payment to sales@ftldistribution.ca (this email is configured for auto-deposit no need for secret
-                                            question/answer) and mention your invoice number : &#32; <b><span><t t-esc="docs.number"/></span></b><br></br><br/>
-                                    <b>- <u> Wire/Bank Transfer &#32;</u>:</b> Please use the following details and mention your invoice number with the payment memo &#32;: <b><span><t t-esc="docs.number"/></span>.<br></br></b><br/>
+                                            question/answer) and mention your invoice number : &#32; <b><span><t t-esc="docs.name"/></span></b><br></br><br/>
+                                    <b>- <u> Wire/Bank Transfer &#32;</u>:</b> Please use the following details and mention your invoice number with the payment memo &#32;: <b><span><t t-esc="docs.name"/></span>.<br></br></b><br/>
                                     <b> Beneficiary Account Name:</b> Follow The Leader Distribution Company<br></br>
                                     <b> Beneficiary Account address :</b> 71 W 2ND AVE UNIT 504 VANCOUVER, BC V5Y 0G9 Canada<br></br>
                                     <b>       Bank:</b> The Bank of Nova Scotia<br></br>
