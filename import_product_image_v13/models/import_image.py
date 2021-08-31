@@ -36,7 +36,7 @@ class ProductImageImportWizard(models.TransientModel):
     file = fields.Binary('File to import', required=True)
 
     def import_file(self):
-        file = StringIO(base64.decodestring(self.file).decode('utf-8'))
+        file = StringIO(base64.decodestring(self.file).decode('ISO-8859-1'))
         reader = csv.reader(file, delimiter=',')
         csv.field_size_limit(sys.maxsize)
         skip_header = True
