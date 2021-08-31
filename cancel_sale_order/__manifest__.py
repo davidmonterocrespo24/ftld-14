@@ -12,7 +12,7 @@
     'website': 'https://www.craftsync.com/',
     'license': 'OPL-1',
     'support':'info@craftsync.com',
-    'depends' : ['sale_management','stock','account_cancel'],
+    'depends' : ['sale_management','stock'],
     'data': [
         'views/stock_warehouse.xml',
 	'views/view_sale_order.xml',
