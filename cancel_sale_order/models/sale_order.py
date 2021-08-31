@@ -4,7 +4,7 @@ from odoo.tools.float_utils import float_round, float_compare, float_is_zero
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.multi
+
     def action_cancel(self):
         quant_obj= self.env['stock.quant']
         moves = self.env['account.move']
