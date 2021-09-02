@@ -22,23 +22,6 @@ Cancel completed Sales Order
 Cancel completed Sale Order
 Cancel completed SO
 
-sale cancel
-Sale Cancel
-picking cancel
-Picking Cancel
-Stock Cancel
-stock cancel
-order cancel
-Order Cancel
-invoice cancel
-Invoice Cancel
-cancel
-cancelled sale
-sale cancelled
-Cancel
-Sale Cancelled
-Cancelled Sale
-
 
 Reset to draft Sales order
 Reset to draft Sale order
@@ -47,3 +30,8 @@ Reset to draft SO
 cancel sale transaction
 cancel sales transaction
 cancel SO transaction
+
+sale cancel
+cancel sale
+cancel so
+
