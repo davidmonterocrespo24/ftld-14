@@ -4,8 +4,7 @@
 {
     "name": "Product Bundle Pack in Odoo",
     "category": 'Sales',
-    "summary": """
-       Combine two or more products together in order to create a bundle product.""",
+    "summary": 'Combine two or more product pack product kit product bundle product pack item on product combo product on sale bundle product delivery bundle product pack kit combine product combine product variant bundle item pack sales bundle delivery pack bundle',
     "description": """
 	BrowseInfo developed a new odoo/OpenERP module apps.
 	This module is use to 
@@ -27,20 +26,20 @@
     """,
     "sequence": 1,
     "author": "Browseinfo",
-    "website": "http://www.browseinfo.in",
-    "version": '12.1.0.9',
-    "depends": ['sale','product','stock','sale_stock','sale_management'],
+    "website": "https://www.browseinfo.in",
+    "version": '14.0.0.1',
+    "depends": ['sale','product','stock','sale_stock','sale_management','purchase'],
     "data": [
-        'views/product_view.xml',
         'wizard/product_bundle_wizard_view.xml',
+        'views/product_view.xml',
         'security/ir.model.access.csv'
     ],
-    "price": 25,
+    "price": 35,
     "currency": 'EUR',
     "installable": True,
     "application": True,
     "auto_install": False,
-    "live_test_url":'https://www.youtube.com/watch?v=CCmY2Tv0dgk&feature=youtu.be',
+    "live_test_url":'https://youtu.be/CCmY2Tv0dgk',
     "images":['static/description/Banner.png'],
 
 }

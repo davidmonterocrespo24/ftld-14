@@ -42,7 +42,7 @@
 		<record id="bi_act_product_bundle_wizard" model="ir.actions.act_window">
 			<field name="name">Dynamic Product Bundle</field>
 			<field name="res_model">wizard.product.bundle.bi</field>
-
+			<field name="binding_view_types">form</field>
 			<field name="view_mode">form</field>
 			<field name="view_id" ref="wizard_product_bundle_bi" />
 			<field name="target">new</field>
