@@ -14,15 +14,6 @@
     odoo combo product pack multiple product pack group product pack choice odoo
     odoo product Pack Price Product Bundle pack price product Bundle Discount product Bundle Offer bundle price
 
-
-
-    odoo create Product kit Product Pack kit Pack of Product Combined Product kit odoo
-    odoo Product kit Custom Combo Product kit Product Customized product kit product odoo
-    odoo Custom product kit Custom Product kit pack product bundle kit product kit bundle odoo 
-    odoo combo product pack kit combo product combo kit bundle pack combo kit product pack kit 
-    odoo combo product kit multiple product kit group product kit choice odoo
-    odoo product kit Price Product kit pack price product kit Discount product kit Bundle Offer bundle price
-
     """,
     "sequence": 1,
     "author": "Browseinfo",
