@@ -39,7 +39,6 @@
     "installable": True,
     "application": True,
     "auto_install": False,
-    "live_test_url":'https://youtu.be/CCmY2Tv0dgk',
-    "images":['static/description/Banner.png'],
+     "images":['static/description/Banner.png'],
 
 }
