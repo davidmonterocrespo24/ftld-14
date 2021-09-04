@@ -41,7 +41,6 @@ class ProductProduct(models.Model):
 			res.list_price = total
 		return res
 
-
 	def write(self,vals):
 		total = 0
 		res = super(ProductProduct, self).write(vals)
