@@ -22,7 +22,7 @@
     odoo combo product pack kit combo product combo kit bundle pack combo kit product pack kit 
     odoo combo product kit multiple product kit group product kit choice odoo
     odoo product kit Price Product kit pack price product kit Discount product kit Bundle Offer bundle price
-	
+
     """,
     "sequence": 1,
     "author": "Browseinfo",
