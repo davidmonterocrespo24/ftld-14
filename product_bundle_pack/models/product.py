@@ -67,9 +67,7 @@ class ResConfigSettings(models.TransientModel):
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
         allow_bundle = self.env['ir.config_parameter'].sudo().get_param('product_bundle_pack.allow_bundle')
-        res.update(
-            allow_bundle = allow_bundle,
-        )
+        res.update(allow_bundle = allow_bundle)
         return res
 
     def set_values(self):
