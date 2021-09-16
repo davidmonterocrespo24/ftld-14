@@ -8,7 +8,6 @@ class ProductTemplate(models.Model):
     income_analytic_tag_ids = fields.Many2many(comodel_name='account.analytic.tag', relation= 'income_analytic_tag_products_rel',string='Analytic Tags')
     expense_analytic_tag_ids = fields.Many2many(comodel_name='account.analytic.tag',  relation= 'expense_analytic_tag_products_rel',string='Analytic Tags')
 
-
     def _get_product_analytic_tags(self):
         self.ensure_one()
         return {
