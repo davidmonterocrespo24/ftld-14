@@ -2277,6 +2277,12 @@ class WooProductTemplateEpt(models.Model):
             update_image = False
         for woo_template in woo_templates:
             _logger.info("Start the export woo product: '%s'", woo_template.name)
+            if woo_template.woo_categ_ids.parent_id:
+                woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id
+                if  woo_template.woo_categ_ids.parent_id.parent_id:
+                    woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id
+                    if  woo_template.woo_categ_ids.parent_id.parent_id.parent_id:
+                        woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id.parent_id
             data = self.prepare_product_data(woo_template, publish, update_price, update_image, basic_detail,
                                              common_log_id, model_id)
             variants = data.get('variations') or []

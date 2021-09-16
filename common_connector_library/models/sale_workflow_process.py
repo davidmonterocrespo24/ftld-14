@@ -107,7 +107,7 @@ class SaleWorkflowProcess(models.Model):
         shipped_orders = orders.filtered(lambda x: x.order_line)
 
         for order in shipped_orders:
-            order.state = 'sale'
+            order.action_confirm()
             order.auto_shipped_order_ept(customer_location, mrp_module)
 
         shipped_orders.validate_and_paid_invoices_ept(self)

@@ -525,9 +525,9 @@ class WooProcessImportExport(models.TransientModel):
         if not woo_template_ids:
             raise UserError(_("Please select some products to Export to WooCommerce Store."))
 
-        if woo_template_ids and len(woo_template_ids) > 80:
-            raise UserError(_("Error:\n- System will not export more then 80 Products at a "
-                              "time.\n- Please select only 80 product for export."))
+        if woo_template_ids and len(woo_template_ids) > 20000:
+            raise UserError(_("Error:\n- System will not export more then 20000 Products at a "
+                              "time.\n- Please select only 20000 product for export."))
 
         instances = woo_instance_obj.search([('active', '=', True)])
 
@@ -626,14 +626,21 @@ class WooProcessImportExport(models.TransientModel):
             raise UserError(_('Please Select any one Option for process Update Products'))
 
         woo_tmpl_ids = self._context.get('active_ids')
-        if woo_tmpl_ids and len(woo_tmpl_ids) > 80:
-            raise UserError(_("Error\n- System will not update more then 80 Products at a "
-                              "time.\n- Please select only 80 product for update."))
+        if woo_tmpl_ids and len(woo_tmpl_ids) > 20000:
+            raise UserError(_("Error\n- System will not update more then 20000 Products at a "
+                              "time.\n- Please select only 20000 product for update."))
 
         instances = woo_instance_obj.search([('active', '=', True)])
         woo_tmpl_ids = woo_product_tmpl_obj.browse(woo_tmpl_ids)
         for instance in instances:
             woo_templates = woo_tmpl_ids.filtered(lambda x: x.woo_instance_id.id == instance.id and x.exported_in_woo)
+            for woo_template in woo_tmpl_ids:
+                if woo_template.woo_categ_ids.parent_id:
+                    woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id
+                    if  woo_template.woo_categ_ids.parent_id.parent_id:
+                        woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id
+                        if  woo_template.woo_categ_ids.parent_id.parent_id.parent_id:
+                            woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id.parent_id
             if not woo_templates:
                 continue
             common_log_id = common_log_book_obj.woo_create_log_book('export', instance)
@@ -659,10 +666,10 @@ class WooProcessImportExport(models.TransientModel):
         woo_product_tmpl_obj = self.env['woo.product.template.ept']
         woo_tmpl_ids = self._context.get('active_ids')
 
-        if woo_tmpl_ids and len(woo_tmpl_ids) > 80:
-            raise UserError(_("Error\n- System will not update more then 80 Products at a "
+        if woo_tmpl_ids and len(woo_tmpl_ids) > 20000:
+            raise UserError(_("Error\n- System will not update more then 20000 Products at a "
                               "time.\n- Please "
-                              "select only 80 product for update."))
+                              "select only 20000 product for update."))
 
         instances = woo_instance_obj.search([('active', '=', True)])
         for instance in instances:
