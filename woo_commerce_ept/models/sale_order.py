@@ -458,6 +458,7 @@ class SaleOrder(models.Model):
         rounding = False if woo_instance.tax_rounding_method == 'round_globally' else True
         line_vals = {
             "name": product.name,
+            "qty_delivered_method" :'stock_move',
             "product_id": product.id,
             "product_uom": product.uom_id.id if product.uom_id else False,
             "order_id": self.id,
