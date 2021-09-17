@@ -8,7 +8,7 @@
     "license": "AGPL-3",
     "category": "Tools",
     "data": [
-        'security/ir.model.access.csv'
+        "security/ir.model.access.csv",
         "views/purge_wizard.xml",
         "views/purge_menus.xml",
         "views/purge_modules.xml",
