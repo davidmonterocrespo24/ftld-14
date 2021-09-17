@@ -8,7 +8,7 @@
             <data />
         </field>
     </record>
-    <record id="action_purge_menus" model="ir.actions.server">
+    <!--record id="action_purge_menus" model="ir.actions.server">
         <field name="name">Purge menus</field>
         <field name="type">ir.actions.server</field>
         <field name="state">code</field>
@@ -16,7 +16,7 @@
         <field name="code">
             action = env.get('cleanup.purge.wizard.menu').get_wizard_action()
         </field>
-    </record>
+    </record->
     <record id="purge_menu_line_tree" model="ir.ui.view">
         <field name="model">cleanup.purge.line.menu</field>
         <field name="inherit_id" ref="tree_purge_line" />
