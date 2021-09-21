@@ -6,10 +6,10 @@
     <field name="inherit_id" ref="account.product_template_form_view" />
     <field name="arch" type="xml">
         <field name="property_account_income_id" position="after">
-            <field name="income_analytic_tag_ids" widget="many2many_tags"/>
+            <field name="income_analytic_tag_ids" />
         </field>
         <field name="property_account_expense_id" position="after">
-            <field name="expense_analytic_tag_ids" widget="many2many_tags"/>
+            <field name="expense_analytic_tag_ids" />
         </field>
     </field>
 </record>
@@ -20,10 +20,10 @@
     <field name="inherit_id" ref="account.view_category_property_form" />
     <field name="arch" type="xml">
         <field name="property_account_income_categ_id" position="after">
-            <field name="income_analytic_tag_ids" widget="many2many_tags"/>
+            <field name="income_analytic_tag_ids" />
         </field>
         <field name="property_account_expense_categ_id" position="after">
-            <field name="expense_analytic_tag_ids" widget="many2many_tags"/>
+            <field name="expense_analytic_tag_ids" />
         </field>
     </field>
 </record>
