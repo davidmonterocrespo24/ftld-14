@@ -12,6 +12,7 @@
                         <label for="name" string="Image Name"/>
                         <h2>
                             <field name="name" placeholder="Image Name"/>
+                            <field name="sequence"/>
                         </h2>
                         <label for="url"/>
                         <br/>
