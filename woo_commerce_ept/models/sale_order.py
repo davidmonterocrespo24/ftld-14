@@ -110,16 +110,19 @@ class SaleOrder(models.Model):
 
         return order_queues_list
 
-    def woo_convert_dates_by_timezone(self, instance, from_date, to_date):
+    def woo_convert_dates_by_timezone(self, instance, from_date, to_date, order_type):
         """
         This method converts the dates by timezone of the store to import orders.
         @param instance: Instance.
         @param from_date: From date for importing orders.
         @param to_date: To date for importing orders.
+        @param order_type: Order type for check from date.
         @author: Maulik Barad on Date 03-Nov-2020.
         """
         if not from_date:
-            if instance.last_order_import_date:
+            if order_type == 'completed' and instance.last_completed_order_import_date:
+                from_date = instance.last_completed_order_import_date - timedelta(days=1)
+            elif instance.last_order_import_date:
                 from_date = instance.last_order_import_date - timedelta(days=1)
             else:
                 from_date = fields.Datetime.now() - timedelta(days=1)
@@ -148,7 +151,7 @@ class SaleOrder(models.Model):
         if not woo_instance.active:
             return False
 
-        from_date, to_date = self.woo_convert_dates_by_timezone(woo_instance, from_date, to_date)
+        from_date, to_date = self.woo_convert_dates_by_timezone(woo_instance, from_date, to_date, order_type)
 
         params = {"after": str(from_date)[:19], "before": str(to_date)[:19], "per_page": 100, "page": 1,
                   "order": "asc", "status": ",".join(map(str, woo_instance.import_order_status_ids.mapped("status")))}
@@ -458,7 +461,6 @@ class SaleOrder(models.Model):
         rounding = False if woo_instance.tax_rounding_method == 'round_globally' else True
         line_vals = {
             "name": product.name,
-            "qty_delivered_method" :'stock_move',
             "product_id": product.id,
             "product_uom": product.uom_id.id if product.uom_id else False,
             "order_id": self.id,
@@ -727,7 +729,7 @@ class SaleOrder(models.Model):
             if str(woo_instance.import_order_after_date) > order_data.get("date_created_gmt"):
                 message = "Order %s is not imported in Odoo due to configuration mismatch.\n Received order date is " \
                           "%s. \n Please check the order after date in WooCommerce configuration." % (order_data.get(
-                    'number'),order_data.get("date_created_gmt"))
+                    'number'), order_data.get("date_created_gmt"))
                 _logger.info(message)
                 self.create_woo_log_lines(message, common_log_book_id, queue_line)
                 continue
@@ -826,7 +828,7 @@ class SaleOrder(models.Model):
         if order_data.get("transaction_id"):
             financial_status = "paid"
         elif order_data.get("date_paid") and order_data.get("payment_method") != "cod" and order_data.get(
-            "status") == "processing":
+                "status") == "processing":
             financial_status = "paid"
         else:
             financial_status = "not_paid"
@@ -1356,11 +1358,11 @@ class SaleOrder(models.Model):
             invoice_vals.update({'woo_instance_id': self.woo_instance_id.id})
         return invoice_vals
 
-    def _get_invoiceable_lines(self,final=False):
+    def _get_invoiceable_lines(self, final=False):
         if self.woo_instance_id:
             rounding = False if self.woo_instance_id.tax_rounding_method == 'round_globally' else True
             self.env.context = dict(self._context)
-            self.env.context.update({'round' : rounding})
+            self.env.context.update({'round': rounding})
         invoiceable_lines = super(SaleOrder, self)._get_invoiceable_lines(final)
         return invoiceable_lines
 
@@ -1399,6 +1401,7 @@ class SaleOrder(models.Model):
             if work_flow_process_record.register_payment:
                 self.paid_invoice_ept(invoices)
         return True
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"

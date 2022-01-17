@@ -55,8 +55,8 @@ class SaleOrder(models.Model):
 
             if order.warehouse_id.cancel_invoice:
                 for invoice in order.invoice_ids:
-                    if invoice.journal_id and not invoice.journal_id.restrict_mode_hash_table:
-                        invoice.journal_id.write({'restrict_mode_hash_table': True})
+                    #if invoice.journal_id and not invoice.journal_id.restrict_mode_hash_table:
+                        #invoice.journal_id.write({'restrict_mode_hash_table': True})
                     if invoice.state in ['draft','cancel']:
                         invoice.button_cancel()
 

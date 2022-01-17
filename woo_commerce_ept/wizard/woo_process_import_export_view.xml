@@ -83,7 +83,8 @@
                                             </li>
                                             <li>
                                                 Connector only imports those orders which have created after a given
-                                                date(WooCommerce > Configuration > Settings > Import Order After Date) in
+                                                date(WooCommerce > Configuration > Settings > Import Order After Date)
+                                                in
                                                 the configuration.
                                             </li>
                                         </ol>
@@ -115,7 +116,8 @@
                                             </li>
                                             <li>
                                                 Connector only imports those orders which have created after a given
-                                                date(WooCommerce > Configuration > Settings > Import Order After Date) in
+                                                date(WooCommerce > Configuration > Settings > Import Order After Date)
+                                                in
                                                 the configuration.
                                             </li>
                                         </ol>
@@ -358,10 +360,12 @@
                                                 This operation allows to import Odoo Products to WooCommerce layer.
                                             </li>
                                             <li>
-                                                You can export the products into csv from Sales > Products > Products.
-                                                Select Multiple Products or Open a product and click on the 'WooCommerce -
+                                                You can export the products into csv/xlsx from Sales > Products >
+                                                Products.
+                                                Select Multiple Products or Open a product and click on the 'WooCommerce
+                                                -
                                                 Export Products' action from Action menu. Select Export Method > Export
-                                                in CSV file.
+                                                in CSV/XLSX file.
                                             </li>
                                         </ol>
                                     </b>

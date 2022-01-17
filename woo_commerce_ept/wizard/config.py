@@ -248,6 +248,10 @@ class ResConfigSettings(models.TransientModel):
                                                  help="This is the date when last unshipped order you have imported in "
                                                       "Odoo.\nSystem will set this date in 'From date' while import "
                                                       "order process.")
+    woo_last_completed_order_import_date = fields.Datetime(string="Last Complete Order Import Date",
+                                                           help="This is the date when last complete order you have imported in "
+                                                                "Odoo.\nSystem will set this date in 'From date' while import "
+                                                                "order process.")
     woo_sales_team_id = fields.Many2one('crm.team',
                                         help="Choose Sales Team that handles the order you import.")
     woo_custom_order_prefix = fields.Boolean("Use Odoo Default Sequence in Woo Orders?",
@@ -309,8 +313,8 @@ class ResConfigSettings(models.TransientModel):
     last_inventory_update_time = fields.Datetime(
         help="It is used for when the last inventory update from Odoo to the Woocommerce store.")
     woo_import_order_after_date = fields.Datetime(string="WooCommerce Import Order After Date",
-                                                      help="Connector only imports those orders which have created "
-                                                           "after a given date.")
+                                                  help="Connector only imports those orders which have created "
+                                                       "after a given date.")
 
     @api.model
     def create(self, vals):
@@ -339,6 +343,7 @@ class ResConfigSettings(models.TransientModel):
 
             self.woo_import_order_status_ids = instance.import_order_status_ids.ids
             self.woo_last_order_import_date = instance.last_order_import_date
+            self.woo_last_completed_order_import_date = instance.last_completed_order_import_date
             self.last_inventory_update_time = instance.last_inventory_update_time
             self.woo_sales_team_id = instance.sales_team_id
             self.woo_auto_import_product = instance.auto_import_product
@@ -382,6 +387,7 @@ class ResConfigSettings(models.TransientModel):
 
             values['import_order_status_ids'] = [(6, 0, self.woo_import_order_status_ids.ids)]
             values['last_order_import_date'] = self.woo_last_order_import_date or False
+            values['last_completed_order_import_date'] = self.woo_last_completed_order_import_date or False
             values['last_inventory_update_time'] = self.last_inventory_update_time or False
             values['sales_team_id'] = self.woo_sales_team_id or False
             values['auto_import_product'] = self.woo_auto_import_product or False
@@ -496,6 +502,7 @@ class ResConfigSettings(models.TransientModel):
                 'company_id': self.woo_company_id and self.woo_company_id.id or False,
                 'import_order_status_ids': [(6, 0, self.woo_import_order_status_ids.ids)],
                 'last_order_import_date': self.woo_last_order_import_date or False,
+                'last_completed_order_import_date': self.woo_last_completed_order_import_date or False,
                 'sales_team_id': self.woo_sales_team_id or False,
                 'custom_order_prefix': self.woo_custom_order_prefix or False,
                 'order_prefix': self.woo_order_prefix or False,
@@ -505,7 +512,7 @@ class ResConfigSettings(models.TransientModel):
                 'woo_attribute_type': self.woo_attribute_type,
                 'weight_uom_id': self.woo_weight_uom_id,
                 'tax_rounding_method': self.woo_tax_rounding_method,
-                'import_order_after_date':self.woo_import_order_after_date
+                'import_order_after_date': self.woo_import_order_after_date
             }
 
             instance.write(basic_configuration_dict)

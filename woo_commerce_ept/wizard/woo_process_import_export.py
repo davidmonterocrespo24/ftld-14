@@ -5,7 +5,8 @@ import csv
 import json
 import logging
 import time
-
+import os
+import xlrd
 from datetime import datetime, timedelta
 from io import StringIO, BytesIO
 
@@ -39,7 +40,7 @@ class WooProcessImportExport(models.TransientModel):
         ('export_category', 'Export Categories'),
         ('update_coupon', 'Update Coupons'),
         ('export_coupon', 'Export Coupons'),
-        ('import_product_from_csv', 'Import Product From CSV')
+        ('import_product_from_csv', 'Import Product From CSV/XLSX')
     ], string="Operation")
     woo_skip_existing_product = fields.Boolean(string="Do not update existing products",
                                                help="Check if you want to skip existing products in"
@@ -103,6 +104,8 @@ class WooProcessImportExport(models.TransientModel):
             self.orders_after_date = from_date
         if self.woo_operation == 'import_unshipped_orders':
             self.woo_check_running_schedulers('ir_cron_woo_import_order_instance_')
+        if self.woo_operation == 'import_completed_orders':
+            self.woo_check_running_schedulers('ir_cron_woo_import_complete_order_instance_')
         if self.woo_operation == 'is_update_order_status':
             self.woo_check_running_schedulers('ir_cron_woo_update_order_status_instance_')
         if self.woo_operation == 'export_stock':
@@ -157,7 +160,7 @@ class WooProcessImportExport(models.TransientModel):
         elif self.woo_operation == "update_coupon":
             self.update_woo_coupons()
         elif self.woo_operation == "import_product_from_csv":
-            self.import_products_from_csv()
+            self.import_products_from_file()
 
         if queues:
             if len(queues) > 1:
@@ -335,7 +338,7 @@ class WooProcessImportExport(models.TransientModel):
         product = woo_products.filtered(lambda x: x.default_code == res_product.get('sku'))
         if product:
             if res_product.get('manage_stock') and res_product.get('stock_quantity') and product.product_id.type \
-                =='product':
+                    == 'product':
                 product_qty = res_product.get('stock_quantity')
                 stock_data.update({'product_qty': product_qty})
                 stock_data.update({'product_id': product.product_id})
@@ -525,9 +528,9 @@ class WooProcessImportExport(models.TransientModel):
         if not woo_template_ids:
             raise UserError(_("Please select some products to Export to WooCommerce Store."))
 
-        if woo_template_ids and len(woo_template_ids) > 20000:
-            raise UserError(_("Error:\n- System will not export more then 20000 Products at a "
-                              "time.\n- Please select only 20000 product for export."))
+        if woo_template_ids and len(woo_template_ids) > 80:
+            raise UserError(_("Error:\n- System will not export more then 80 Products at a "
+                              "time.\n- Please select only 80 product for export."))
 
         instances = woo_instance_obj.search([('active', '=', True)])
 
@@ -585,7 +588,7 @@ class WooProcessImportExport(models.TransientModel):
 
         for woo_template in woo_templates:
             if not self.env['woo.product.product.ept'].search(
-                [('woo_template_id', '=', woo_template.id), ('default_code', '=', False)]):
+                    [('woo_template_id', '=', woo_template.id), ('default_code', '=', False)]):
                 filter_templates.append(woo_template)
 
         return filter_templates
@@ -622,25 +625,18 @@ class WooProcessImportExport(models.TransientModel):
         woo_product_tmpl_obj = self.env['woo.product.template.ept']
 
         if not self.woo_basic_detail and not self.woo_is_set_price and not self.woo_is_set_image and not \
-            self.woo_publish:
+                self.woo_publish:
             raise UserError(_('Please Select any one Option for process Update Products'))
 
         woo_tmpl_ids = self._context.get('active_ids')
-        if woo_tmpl_ids and len(woo_tmpl_ids) > 20000:
-            raise UserError(_("Error\n- System will not update more then 20000 Products at a "
-                              "time.\n- Please select only 20000 product for update."))
+        if woo_tmpl_ids and len(woo_tmpl_ids) > 80:
+            raise UserError(_("Error\n- System will not update more then 80 Products at a "
+                              "time.\n- Please select only 80 product for update."))
 
         instances = woo_instance_obj.search([('active', '=', True)])
         woo_tmpl_ids = woo_product_tmpl_obj.browse(woo_tmpl_ids)
         for instance in instances:
             woo_templates = woo_tmpl_ids.filtered(lambda x: x.woo_instance_id.id == instance.id and x.exported_in_woo)
-            for woo_template in woo_tmpl_ids:
-                if woo_template.woo_categ_ids.parent_id:
-                    woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id
-                    if  woo_template.woo_categ_ids.parent_id.parent_id:
-                        woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id
-                        if  woo_template.woo_categ_ids.parent_id.parent_id.parent_id:
-                            woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id.parent_id
             if not woo_templates:
                 continue
             common_log_id = common_log_book_obj.woo_create_log_book('export', instance)
@@ -666,10 +662,10 @@ class WooProcessImportExport(models.TransientModel):
         woo_product_tmpl_obj = self.env['woo.product.template.ept']
         woo_tmpl_ids = self._context.get('active_ids')
 
-        if woo_tmpl_ids and len(woo_tmpl_ids) > 20000:
-            raise UserError(_("Error\n- System will not update more then 20000 Products at a "
+        if woo_tmpl_ids and len(woo_tmpl_ids) > 80:
+            raise UserError(_("Error\n- System will not update more then 80 Products at a "
                               "time.\n- Please "
-                              "select only 20000 product for update."))
+                              "select only 80 product for update."))
 
         instances = woo_instance_obj.search([('active', '=', True)])
         for instance in instances:
@@ -871,23 +867,67 @@ class WooProcessImportExport(models.TransientModel):
         if coupon_ids:
             coupon_ids.update_woo_coupons(coupon_ids.woo_instance_id, common_log_book_id, model_id)
 
+    def import_products_from_file(self):
+        """
+        This method is use to import product from csv,xlsx,xls.
+        @author: Meera Sidapara @Emipro Technologies Pvt. Ltd on date 22 December 2021 .
+        Task_id: 181381 - Take fixes & changes as per v15
+        """
+        try:
+            if os.path.splitext(self.file_name)[1].lower() not in ['.csv', '.xls', '.xlsx']:
+                raise UserError(_("Invalid file format. You are only allowed to upload .csv, .xlsx file."))
+            if os.path.splitext(self.file_name)[1].lower() == '.csv':
+                self.import_products_from_csv()
+            else:
+                self.import_products_from_xlsx()
+        except Exception as error:
+            raise UserError(_("Receive the error while import file. %s", error))
+
     def import_products_from_csv(self):
         """
         This method used to import products using CSV file which imported in Woo product layer.
         @author: Dipak Gogiya @Emipro Technologies Pvt. Ltd
         Migration done by Haresh Mori @ Emipro on date 14 September 2020 .
         """
+        file_data = self.read_csv_file()
+        self.csv_required_header_validation(file_data.fieldnames)
+        self.create_products_from_file(file_data)
+        return True
+
+    def import_products_from_xlsx(self):
+        """
+        This method used to import product using xlsx file in shopify layer.
+        @author: Meera Sidapara @Emipro Technologies Pvt. Ltd on date 22 December 2021 .
+        Task_id: 181381 - Take fixes & changes as per v15
+        """
+        header, product_data = self.read_xlsx_file()
+        self.csv_required_header_validation(header)
+        self.create_products_from_file(product_data)
+        return True
+
+    def csv_required_header_validation(self, header):
+        """ This method is used to check the required field is existing in a csv file or not.
+            @author: Haresh Mori @Emipro Technologies Pvt. Ltd on date 7 November 2020 .
+            Task_id: 168147 - Code refactoring : 5th - 6th November
+        """
+        required_fields = ['template_name', 'product_name', 'product_default_code',
+                           'woo_product_default_code', 'product_description', 'sale_description',
+                           'PRODUCT_TEMPLATE_ID', 'PRODUCT_ID', 'CATEGORY_ID']
+        for required_field in required_fields:
+            if required_field not in header:
+                raise UserError(_("Required Column %s Is Not Available In CSV File") % required_field)
+
+    def create_products_from_file(self, file_data):
+        """
+        This method is used to create products in Woo product layer from the file.
+        @author: Meera Sidapara @Emipro Technologies Pvt. Ltd on date 22 December 2021 .
+        Task_id: 181381 - Take fixes & changes as per v15
+        """
         woo_common_log_obj = self.env["common.log.book.ept"]
         instance_id = self.woo_instance_id
 
         if not self.choose_file:
             raise UserError(_('Please Select the file for start process of Product Sync'))
-        if self.file_name and not self.file_name.lower().endswith('.csv'):
-            raise UserError(_("Please provide only CSV File to Import Products"))
-
-        file_data = self.read_csv_file()
-
-        self.csv_required_header_validation(file_data)
 
         woo_common_log_id = woo_common_log_obj.woo_create_log_book('import', instance_id)
         row_no = 0
@@ -912,18 +952,6 @@ class WooProcessImportExport(models.TransientModel):
             woo_common_log_id.unlink()
 
         return True
-
-    def csv_required_header_validation(self, file_data):
-        """ This method is used to check the required field is existing in a csv file or not.
-            @author: Haresh Mori @Emipro Technologies Pvt. Ltd on date 7 November 2020 .
-            Task_id: 168147 - Code refactoring : 5th - 6th November
-        """
-        required_fields = ['template_name', 'product_name', 'product_default_code',
-                           'woo_product_default_code', 'product_description', 'sale_description',
-                           'PRODUCT_TEMPLATE_ID', 'PRODUCT_ID', 'CATEGORY_ID']
-        for required_field in required_fields:
-            if not required_field in file_data.fieldnames:
-                raise UserError(_("Required Column %s Is Not Available In CSV File") % required_field)
 
     def create_csv_mismatch_log_line(self, record, row_no, woo_common_log_id):
         """ This method used to create a mismatch log line while csv processing for import product.
@@ -961,6 +989,31 @@ class WooProcessImportExport(models.TransientModel):
         file_read = StringIO(import_file.read().decode())
         reader = csv.DictReader(file_read, delimiter=',')
         return reader
+
+    def read_xlsx_file(self):
+        """
+        This method is use to read the xlsx file data.
+        @author: Meera Sidapara @Emipro Technologies Pvt. Ltd on date 22 December 2021 .
+        Task_id: 181381 - Take fixes & changes as per v15
+        """
+        validation_header = []
+        product_data = []
+        sheets = xlrd.open_workbook(file_contents=base64.b64decode(self.choose_file.decode('UTF-8')))
+        header = dict()
+        is_header = False
+        for sheet in sheets.sheets():
+            for row_no in range(sheet.nrows):
+                if not is_header:
+                    headers = [d.value for d in sheet.row(row_no)]
+                    validation_header = headers
+                    [header.update({d: headers.index(d)}) for d in headers]
+                    is_header = True
+                    continue
+                row = dict()
+                [row.update({k: sheet.row(row_no)[v].value}) for k, v in header.items() for c in
+                 sheet.row(row_no)]
+                product_data.append(row)
+        return validation_header, product_data
 
     def create_or_update_woo_template(self, instance_id, record):
         """ This method uses to create/update the Woocmmerce layer template.

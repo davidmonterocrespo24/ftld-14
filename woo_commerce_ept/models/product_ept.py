@@ -582,7 +582,7 @@ class WooProductTemplateEpt(models.Model):
         @author: Dipak Gogiya @Emipro Technologies Pvt. Ltd.
         """
         attributes_data = []
-        total_pages = response and response.headers.get('x-wp-totalpages') or 1
+        total_pages = response.headers.get('x-wp-totalpages', 0) if response else 1
         if int(total_pages) >= 2:
             for page in range(2, int(total_pages) + 1):
                 try:
@@ -734,7 +734,7 @@ class WooProductTemplateEpt(models.Model):
                     start_page = instance.import_product_page_count
                 else:
                     product_queues += self.create_woo_product_queue(results, instance, common_log_id, import_all,
-                                                                  template_id)
+                                                                    template_id)
                 for page in range(start_page, int(total_pages) + 1):
                     instance.import_product_page_count = page
                     results = self.import_all_woo_products(instance, common_log_id, page)
@@ -997,7 +997,7 @@ class WooProductTemplateEpt(models.Model):
             attribute_name = variation_attribute.get('name')
             for attribute in template_attributes:
                 if attribute.get('variation') and \
-                    attribute.get('name') and attribute.get('name').replace(" ", "-").lower() == attribute_name:
+                        attribute.get('name') and attribute.get('name').replace(" ", "-").lower() == attribute_name:
                     attribute_name = attribute.get('name')
                     break
             product_attribute = self.env["product.attribute"].get_attribute(attribute_name, "radio", "always", True)
@@ -1373,7 +1373,8 @@ class WooProductTemplateEpt(models.Model):
             _logger.info("Images Updated for Template {0}".format(woo_template.name))
         if variant_image:
             woo_template_image_id = template_images and template_images[0].get('id') or False
-            woo_product_image = self.update_woo_variant_image(variant_image, woo_template, woo_product, product_dict, woo_template_image_id)
+            woo_product_image = self.update_woo_variant_image(variant_image, woo_template, woo_product, product_dict,
+                                                              woo_template_image_id)
             all_woo_product_images = woo_product_image_obj.search([("woo_template_id", "=", woo_template.id),
                                                                    ("woo_variant_id", "=", woo_product.id)])
 
@@ -2277,12 +2278,6 @@ class WooProductTemplateEpt(models.Model):
             update_image = False
         for woo_template in woo_templates:
             _logger.info("Start the export woo product: '%s'", woo_template.name)
-            if woo_template.woo_categ_ids.parent_id:
-                woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id
-                if  woo_template.woo_categ_ids.parent_id.parent_id:
-                    woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id
-                    if  woo_template.woo_categ_ids.parent_id.parent_id.parent_id:
-                        woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id.parent_id
             data = self.prepare_product_data(woo_template, publish, update_price, update_image, basic_detail,
                                              common_log_id, model_id)
             variants = data.get('variations') or []

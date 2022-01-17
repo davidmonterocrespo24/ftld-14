@@ -2,7 +2,7 @@
 # See LICENSE file for full copyright and licensing details.
 {
     'name': 'Odoo WooCommerce Connector',
-    'version': '14.0.5.1',
+    'version': '14.0.6.0.0',
     'license': 'OPL-1',
     'category': 'Sales',
     'summary': 'Odoo Woocommerce Connector helps you automate your vital business processes at Odoo by enabling '
