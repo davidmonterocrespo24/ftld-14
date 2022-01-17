@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_import_user_images" model="ir.ui.view">
+            <field name="name">Import Product Images View</field>
+            <field name="model">import.product.images</field>
+            <field name="arch" type="xml">
+                <form string="Export Product Images">
+
+                    <group>
+                        <group>
+                            <field name="file" required="1"/>
+                        </group>
+
+                    </group>
+                    <footer>
+                        <button name="import_images" string="Import Images" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+
+
+
+		
+			<record id="action_import_product_images" model="ir.actions.act_window">
+		<field name="name">Import Product Images</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">import.product.images</field>
+		<field name="view_mode">form</field>		
+		<field name="view_id" ref="view_import_user_images"/>
+		<field name="binding_model_id" ref="sale.model_product_template"/>
+		<field name="target">new</field>
+	</record>
+
+
+
+    </data>
+
+</odoo>

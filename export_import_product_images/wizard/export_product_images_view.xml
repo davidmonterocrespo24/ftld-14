@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_export_product_images" model="ir.ui.view">
+            <field name="name">Export Product Images View</field>
+            <field name="model">export.product.images</field>
+            <field name="arch" type="xml">
+                <form string="Export Product Images">
+                    <group>
+                        <group>
+                            <p class="oe_grey">
+                                Selected Products Images shall be saved to the specified Location.
+                            </p>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="location" required="1"/>
+                        </group>
+                        <group>
+                            <field name="image_size" required="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="export_images" string="Export Images" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+
+
+
+		
+			<record id="action_export_product_images" model="ir.actions.act_window">
+		<field name="name">Export Product Images</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">import.product.images</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="view_export_product_images"/>
+		<field name="binding_model_id" ref="sale.model_product_template"/>
+		<field name="target">new</field>
+	</record>
+
+
+    </data>
+
+</odoo>

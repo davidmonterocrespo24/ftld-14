@@ -1,0 +1,21 @@
+<odoo>
+  <data>
+      <record id="purchase_order_form_inherit" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']" position="attributes">
+              <attribute name="widget">section_and_note_one2many</attribute>
+              <attribute name="mode">tree,kanban</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='currency_id']" position="before">
+              <control>
+                  <create string="Add a product"/>
+                  <create string="Configure a product" context="{'open_product_configurator': True}" groups="product.group_product_variant"/>
+              </control>
+            </xpath>
+        </field>
+    </record>
+  </data>
+</odoo>

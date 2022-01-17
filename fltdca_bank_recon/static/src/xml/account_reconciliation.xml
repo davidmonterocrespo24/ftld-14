@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+
+	<div t-extend="reconciliation.line.match">
+        <t t-jquery=".load-more" t-operation="replace"/>
+        <t t-jquery=".match_controls" t-operation="before">
+            <div class="load-more text-center">
+		        <a href="#">Load more... (<span></span> remaining)</a>
+		    </div>
+        </t>
+	</div>
+    
+</templates>

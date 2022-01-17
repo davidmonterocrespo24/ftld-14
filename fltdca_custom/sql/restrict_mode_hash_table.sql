@@ -1,0 +1,1 @@
+UPDATE account_journal SET restrict_mode_hash_table=false WHERE name='Customer Invoices';
