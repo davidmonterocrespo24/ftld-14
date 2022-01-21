@@ -20,6 +20,8 @@ class WooProductTemplateEpt(models.Model):
     _order = 'product_tmpl_id'
     _description = "WooCommerce Product Template"
 
+    response = fields.Text(string="Response", required=False, )
+
     @api.depends('woo_product_ids.exported_in_woo', 'woo_product_ids.variant_id')
     def _compute_total_sync_variants(self):
         """
