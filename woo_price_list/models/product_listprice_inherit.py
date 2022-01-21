@@ -16,8 +16,13 @@ class ProductPricelist(models.Model):
         _logger.error(str(pricelist.item_ids))
 
         for r in pricelist.item_ids:
-            woo_product_obj = self.env['woo.product.template.ept'].search([('product_tmpl_id', '=', r.product_tmpl_id.id)])
+
             _logger.error(woo_product_obj.display_name)
+
+            if r.applied_on == '1_product':
+                woo_product_obj = self.env['woo.product.template.ept'].search([('product_tmpl_id', '=', r.product_tmpl_id.id)])
+            elif r.applied_on == '0_product_variant':
+                woo_product_obj = self.env['woo.product.product.ept'].search([('product_id', '=', r.product_id.id)])
             if woo_product_obj.slug:
                 data= """
                     {
