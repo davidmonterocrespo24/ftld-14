@@ -95,6 +95,6 @@ class ProductPricelist(models.Model):
                 json_final.append(res)
 
 
-        _logger.debug(str(json_final))
+        _logger.error(str(json_final))
 
     
