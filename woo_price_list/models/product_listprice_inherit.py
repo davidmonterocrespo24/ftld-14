@@ -2,6 +2,8 @@
 
 from odoo import models, fields, api
 import json
+import logging
+_logger = logging.getLogger(__name__)
 
 class ProductPricelist(models.Model):
     _inherit = 'product.pricelist'
@@ -90,6 +92,6 @@ class ProductPricelist(models.Model):
                 json_final.append(res)
 
 
-        print(json_final)
+        _logger.debug(str(json_final))
 
     
