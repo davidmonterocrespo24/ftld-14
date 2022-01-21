@@ -13,9 +13,11 @@ class ProductPricelist(models.Model):
         json_final=[]
         pricelist=self.env["woo.instance.ept"].search([],limit=1).woo_pricelist_id
         _logger.error(str(pricelist))
+        _logger.error(str(pricelist.item_ids))
 
         for r in pricelist.item_ids:
             woo_product_obj = self.env['woo.product.product.ept'].search([('product_id', '=', r.product_tmpl_id.id)])
+            _logger.error(woo_product_obj.display_name)
             if woo_product_obj.slug:
                 data= """
                     {
