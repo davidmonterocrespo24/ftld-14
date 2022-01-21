@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="lista_precio_inherit" model="ir.ui.view">
+            <field name="name">Lista de precios</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//sheet" position="before">
+                    <button string="Export Json" type="object" name="export_json"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>
