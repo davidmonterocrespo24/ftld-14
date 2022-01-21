@@ -2503,6 +2503,7 @@ class WooProductTemplateEpt(models.Model):
             'updated_at': updated_at or False, 'exported_in_woo': True,
             'total_variants_in_woo': total_variants_in_woo,
             "website_published": True if publish == 'publish' else False
+            'response':response
         }
         woo_template.write(tmpl_data)
         return True
