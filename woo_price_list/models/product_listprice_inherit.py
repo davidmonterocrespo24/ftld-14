@@ -12,6 +12,7 @@ class ProductPricelist(models.Model):
     def export_json(self):
         json_final=[]
         pricelist=self.env["woo.instance.ept"].search([],limit=1).woo_pricelist_id
+        _logger.debug(str(pricelist))
 
         for r in pricelist.item_ids:
             woo_product_obj = self.env['woo.product.product.ept'].search([('product_id', '=', r.product_tmpl_id.id)])
