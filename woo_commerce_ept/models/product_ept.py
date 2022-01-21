@@ -21,6 +21,8 @@ class WooProductTemplateEpt(models.Model):
     _description = "WooCommerce Product Template"
 
     response = fields.Text(string="Response", required=False, )
+    slug = fields.Char(help="The slug is the URL-friendly version of the name. It is usually all "
+                            "lowercase and contains only letters, numbers, and hyphens.")
 
     @api.depends('woo_product_ids.exported_in_woo', 'woo_product_ids.variant_id')
     def _compute_total_sync_variants(self):
@@ -2492,13 +2494,15 @@ class WooProductTemplateEpt(models.Model):
 
         created_at = response.get('date_created').replace('T', ' ')
         updated_at = response.get('date_modified').replace('T', ' ')
+        slug=response.get('slug')
 
         if template.product_variant_count == 1 and not template.attribute_line_ids:
             woo_product = woo_template.woo_product_ids
             woo_product.write({'variant_id': woo_tmpl_id,
                                'created_at': created_at or False, 'updated_at': updated_at or False,
                                'exported_in_woo': True,
-                               'response':response})
+                               'response':response,
+                               'slug':slug})
         total_variants_in_woo = len(response_variations) if response_variations else 1
 
         tmpl_data = {
@@ -2506,7 +2510,8 @@ class WooProductTemplateEpt(models.Model):
             'updated_at': updated_at or False, 'exported_in_woo': True,
             'total_variants_in_woo': total_variants_in_woo,
             "website_published": True if publish == 'publish' else False,
-            'response':response
+            'response':response,
+            'slug':slug
         }
         woo_template.write(tmpl_data)
         return True
@@ -2527,10 +2532,13 @@ class WooProductTemplateEpt(models.Model):
         woo_product = woo_product_obj.search([('default_code', '=', variant_sku),
                                               ('woo_template_id', '=', woo_template.id),
                                               ('woo_instance_id', '=', woo_template.woo_instance_id.id)])
+        slug=response_variation.get('slug')
         response_variant_data = {
             'variant_id': variant_id, 'created_at': variant_created_at,
             'updated_at': variant_updated_at, 'exported_in_woo': True,
-            'response':response_variation
+            'response':response_variation,
+            'slug':slug
+
         }
         woo_product and woo_product.write(response_variant_data)
         return True
@@ -2558,6 +2566,8 @@ class ProductProductEpt(models.Model):
                                          help="Enable stock management at product level in WooCommerce")
     woo_image_ids = fields.One2many("woo.product.image.ept", "woo_variant_id")
     response = fields.Text(string="Response", required=False, )
+    slug = fields.Char(help="The slug is the URL-friendly version of the name. It is usually all "
+                            "lowercase and contains only letters, numbers, and hyphens.")
 
     def toggle_active(self):
         """
