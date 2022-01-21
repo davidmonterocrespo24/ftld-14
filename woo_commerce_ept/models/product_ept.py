@@ -2497,7 +2497,8 @@ class WooProductTemplateEpt(models.Model):
             woo_product = woo_template.woo_product_ids
             woo_product.write({'variant_id': woo_tmpl_id,
                                'created_at': created_at or False, 'updated_at': updated_at or False,
-                               'exported_in_woo': True})
+                               'exported_in_woo': True,
+                               'response':response})
         total_variants_in_woo = len(response_variations) if response_variations else 1
 
         tmpl_data = {
@@ -2528,7 +2529,8 @@ class WooProductTemplateEpt(models.Model):
                                               ('woo_instance_id', '=', woo_template.woo_instance_id.id)])
         response_variant_data = {
             'variant_id': variant_id, 'created_at': variant_created_at,
-            'updated_at': variant_updated_at, 'exported_in_woo': True
+            'updated_at': variant_updated_at, 'exported_in_woo': True,
+            'response':response_variation
         }
         woo_product and woo_product.write(response_variant_data)
         return True
@@ -2555,6 +2557,7 @@ class ProductProductEpt(models.Model):
     woo_is_manage_stock = fields.Boolean("Is Manage Stock?", default=True,
                                          help="Enable stock management at product level in WooCommerce")
     woo_image_ids = fields.One2many("woo.product.image.ept", "woo_variant_id")
+    response = fields.Text(string="Response", required=False, )
 
     def toggle_active(self):
         """
