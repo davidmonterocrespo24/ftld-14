@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
 # See LICENSE file for full copyright and licensing details.
-import base64
-import csv
+
 import json
 import logging
-import time
-import os
-import xlrd
-from datetime import datetime, timedelta
-from io import StringIO, BytesIO
+
 
 from odoo import api, models, fields, _
-from odoo.exceptions import UserError
-from odoo.tools.misc import split_every
+
 
 _logger = logging.getLogger("WooCommerce")
 

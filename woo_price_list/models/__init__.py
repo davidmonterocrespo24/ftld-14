@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import product_listprice_inherit
+from . import woo_process_import_export
