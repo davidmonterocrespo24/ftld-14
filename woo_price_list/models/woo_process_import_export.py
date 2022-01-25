@@ -33,7 +33,7 @@ class WooProcessImportExport(models.TransientModel):
         name=""
         for r in pricelist.item_ids:
             if r.applied_on == '1_product':
-                name=r.product_tmpl_id.product_variant_ids[0].display_name+" "+str(r.min_quantity)+" "+r.price
+                name=r.name+" "+str(r.min_quantity)+" "+r.price
                 woo_product_obj = self.env['woo.product.template.ept'].search([('product_tmpl_id', '=', r.product_tmpl_id.id)])
             elif r.applied_on == '0_product_variant':
                 woo_product_obj = self.env['woo.product.product.ept'].search([('product_id', '=', r.product_id.id)])
