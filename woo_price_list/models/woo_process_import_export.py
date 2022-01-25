@@ -1,25 +1,49 @@
 # -*- coding: utf-8 -*-
-
-from odoo import models, fields, api
+# See LICENSE file for full copyright and licensing details.
+import base64
+import csv
 import json
 import logging
-_logger = logging.getLogger(__name__)
+import time
+import os
+import xlrd
+from datetime import datetime, timedelta
+from io import StringIO, BytesIO
 
-class ProductPricelist(models.Model):
-    _inherit = 'product.pricelist'
+from odoo import api, models, fields, _
+from odoo.exceptions import UserError
+from odoo.tools.misc import split_every
+
+_logger = logging.getLogger("WooCommerce")
 
 
-    def export_json(self):
+class WooProcessImportExport(models.TransientModel):
+    _inherit = 'woo.process.import.export'
+    _description = "WooCommerce Import/Export Process"
+
+    woo_operation = fields.Selection(selection_add=[('expor_list_price', 'Export Price List')])
+
+
+    def execute(self):
+        if self.woo_operation == "expor_list_price":
+            self.woo_export_expor_list_price()
+        return super().execute()
+
+
+
+
+
+    def woo_export_expor_list_price(self):
         json_final=[]
         pricelist=self.env["woo.instance.ept"].search([],limit=1).woo_pricelist_id
-        _logger.error(str(pricelist))
-        _logger.error(str(pricelist.item_ids))
-
+        name=""
         for r in pricelist.item_ids:
             if r.applied_on == '1_product':
+                name=r.product_tmpl_id.product_variant_id.display_name+" "+str(r.min_quantity)
                 woo_product_obj = self.env['woo.product.template.ept'].search([('product_tmpl_id', '=', r.product_tmpl_id.id)])
             elif r.applied_on == '0_product_variant':
                 woo_product_obj = self.env['woo.product.product.ept'].search([('product_id', '=', r.product_id.id)])
+                name=r.product_id.display_name+" "+str(r.min_quantity)
             if woo_product_obj.slug:
                 data= """
                     {
@@ -91,12 +115,10 @@ class ProductPricelist(models.Model):
                 res = json.loads(data)
 
                 res['filters'][0]['value'][0]=woo_product_obj.slug
-                res["title"]=r.product_tmpl_id.product_variant_id.display_name+" "+str(r.min_quantity)
+                res["title"]=name
                 res["bulk_adjustments"]["ranges"][0]["from"]=r.min_quantity
                 res["bulk_adjustments"]["ranges"][0]["value"]=r.fixed_price
                 json_final.append(res)
 
 
         _logger.error(str(json_final))
-
-    
