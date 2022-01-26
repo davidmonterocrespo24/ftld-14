@@ -23,7 +23,7 @@ class WooProcessImportExport(models.TransientModel):
     def execute(self):
         if self.woo_operation == "expor_list_price":
             self.woo_export_expor_list_price()
-        return super().execute()
+
 
 
 
