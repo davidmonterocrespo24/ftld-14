@@ -121,3 +121,4 @@ class WooProcessImportExport(models.TransientModel):
                 json_final.append(res)
 
         self.json_price_list=json_final
+        _logger.error(str(json_final))
