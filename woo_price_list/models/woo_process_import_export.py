@@ -33,14 +33,17 @@ class WooProcessImportExport(models.TransientModel):
         json_final=[]
         pricelist=self.env["woo.instance.ept"].search([],limit=1).woo_pricelist_id
         name=""
+        sku=""
         for r in pricelist.item_ids:
             if r.applied_on == '1_product':
-                name=r.name+" "+str(r.min_quantity)
+                name=r.name+" "+str(r.min_quantity)+" "+str(r.price)
                 woo_product_obj = self.env['woo.product.template.ept'].search([('product_tmpl_id', '=', r.product_tmpl_id.id)])
+                sku= r.product_tmpl_id.default_code
             elif r.applied_on == '0_product_variant':
                 woo_product_obj = self.env['woo.product.product.ept'].search([('product_id', '=', r.product_id.id)])
-                name=r.product_id.display_name+" "+str(r.min_quantity)
-            if woo_product_obj.slug:
+                name=r.product_id.display_name+" "+str(r.min_quantity)+ " "+str(r.price)
+                sku= r.product_id.default_code
+            if woo_product_obj.default_code:
                 data= """
                     {
                       "type": "package",
@@ -110,7 +113,7 @@ class WooProcessImportExport(models.TransientModel):
 
                 res = json.loads(data)
 
-                res['filters'][0]['value'][0]=woo_product_obj.slug
+                res['filters'][0]['value'][0]=sku
                 res["title"]=name
                 res["bulk_adjustments"]["ranges"][0]["from"]=r.min_quantity
                 res["bulk_adjustments"]["ranges"][0]["value"]=r.fixed_price
