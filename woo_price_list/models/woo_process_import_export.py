@@ -23,6 +23,15 @@ class WooProcessImportExport(models.TransientModel):
     def execute(self):
         if self.woo_operation == "expor_list_price":
             self.woo_export_expor_list_price()
+            return {
+                'name': _('WooCommerce Import/Export Process'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'woo.process.import.export',
+                'target': 'new',
+                'context': {'default_json_price_list': self.json_price_list}
+            }
 
 
 
