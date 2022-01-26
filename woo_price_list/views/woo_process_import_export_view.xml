@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_woo_process_import_export_ept" model="ir.ui.view">
+        <field name="name">Process Import/Export</field>
+        <field name="model">woo.process.import.export</field>
+        <field name="inherit_id" ref="woo_commerce_ept.view_woo_process_import_export_ept"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//group[@name='export_stock']" position="after">
+                <group name="export_price_list" attrs="{'invisible':[('woo_operation','!=','expor_list_price')]}">
+                    <group>
+                        <field name="json_price_list"/>
+                    </group>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

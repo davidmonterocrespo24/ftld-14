@@ -17,6 +17,8 @@ class WooProcessImportExport(models.TransientModel):
 
     woo_operation = fields.Selection(selection_add=[('expor_list_price', 'Export Price List')])
 
+    json_price_list = fields.Text(string="Json List Price", required=False, )
+
 
     def execute(self):
         if self.woo_operation == "expor_list_price":
@@ -45,7 +47,7 @@ class WooProcessImportExport(models.TransientModel):
                       "filters": [
                            {
                                 "qty": 1,
-                                "type": "products",
+                                "type": "product_sku",
                                 "method": "in_list",
                                 "value": [
                                      "producto-price-list"
@@ -114,5 +116,4 @@ class WooProcessImportExport(models.TransientModel):
                 res["bulk_adjustments"]["ranges"][0]["value"]=r.fixed_price
                 json_final.append(res)
 
-
-        _logger.error(str(json_final))
+        self.json_price_list=json_final
