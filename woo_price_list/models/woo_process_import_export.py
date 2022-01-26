@@ -44,7 +44,7 @@ class WooProcessImportExport(models.TransientModel):
                 woo_product_obj = self.env['woo.product.product.ept'].search([('product_id', '=', r.product_id.id)])
                 name=r.product_id.display_name+" "+str(r.min_quantity)+ " "+str(r.price)
                 sku= r.product_id.default_code
-            if sku:
+            if sku and woo_product_obj:
                 data= """
                     {
                       "type": "package",
