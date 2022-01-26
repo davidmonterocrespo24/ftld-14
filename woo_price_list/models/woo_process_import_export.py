@@ -33,8 +33,9 @@ class WooProcessImportExport(models.TransientModel):
         json_final=[]
         pricelist=self.env["woo.instance.ept"].search([],limit=1).woo_pricelist_id
         name=""
-        sku=""
+        sku=False
         for r in pricelist.item_ids:
+            sku=False
             if r.applied_on == '1_product':
                 name=r.name+" "+str(r.min_quantity)+" "+str(r.price)
                 woo_product_obj = self.env['woo.product.template.ept'].search([('product_tmpl_id', '=', r.product_tmpl_id.id)])
@@ -43,7 +44,7 @@ class WooProcessImportExport(models.TransientModel):
                 woo_product_obj = self.env['woo.product.product.ept'].search([('product_id', '=', r.product_id.id)])
                 name=r.product_id.display_name+" "+str(r.min_quantity)+ " "+str(r.price)
                 sku= r.product_id.default_code
-            if woo_product_obj.default_code:
+            if sku:
                 data= """
                     {
                       "type": "package",
