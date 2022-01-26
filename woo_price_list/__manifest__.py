@@ -24,7 +24,7 @@
     'data': [
         # 'security/ir.model.access.csv',
 
-        #'views/lista_product_inherit.xml',
+        'views/woo_process_import_export_view.xml',
 
     ],
 
