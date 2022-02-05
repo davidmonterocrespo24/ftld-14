@@ -128,17 +128,19 @@ class WooProcessImportExport(models.TransientModel):
             #         sku= r.product_id.default_code
             #     if sku and woo_product_obj:
             range={}
+            ranges=[]
             for i_id in item_ids:
                 range.update({ 'from': i_id.min_quantity})
                 range.update({ 'value': i_id.fixed_price})
-                res["bulk_adjustments"]["ranges"].append(range)
-                _logger.error(str(range))
+                ranges.append(range)
+            _logger.error(str(ranges))
 
             res = json.loads(data)
 
 
             res['filters'][0]['value'][0]=woo_p.product_tmpl_id.default_code
             res["title"]=woo_p.display_name
+            res["bulk_adjustments"]["ranges"].extend(ranges)
             #res=json.dumps(res, indent=4, sort_keys=True)
             json_final.append(res)
 
