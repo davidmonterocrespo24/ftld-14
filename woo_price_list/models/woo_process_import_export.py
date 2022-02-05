@@ -128,7 +128,7 @@ class WooProcessImportExport(models.TransientModel):
             res = json.loads(data)
             for i_id in item_ids:
                 _logger.error(str(i_id.name))
-                res["bulk_adjustments"]["ranges"].append({ 'from': i_id.min_quantity,'value': i_id.fixed_price})
+                res["bulk_adjustments"]["ranges"].append({ 'to': i_id.min_quantity,'value': i_id.fixed_price})
 
 
 
