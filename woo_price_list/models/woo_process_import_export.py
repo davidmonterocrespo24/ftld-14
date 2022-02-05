@@ -136,6 +136,7 @@ class WooProcessImportExport(models.TransientModel):
             _logger.error(str(ranges))
 
             res = json.loads(data)
+            res=json.dumps(res, indent=4, sort_keys=True)
 
             res['filters'][0]['value'][0]=woo_p.product_tmpl_id.default_code
             res["title"]=woo_p.display_name
