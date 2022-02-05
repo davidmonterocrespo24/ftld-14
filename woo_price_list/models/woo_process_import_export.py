@@ -90,11 +90,7 @@ class WooProcessImportExport(models.TransientModel):
                                "qty_based": "not",
                                "discount_type": "price__fixed",
                                "ranges": [
-                                    {
-                                         "from": 8,
-                                         "to": "",
-                                         "value": 500
-                                    }
+                                    
                                ],
                                "table_message": ""
                           },
