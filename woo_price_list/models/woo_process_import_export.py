@@ -4,9 +4,7 @@
 import json
 import logging
 
-
 from odoo import api, models, fields, _
-
 
 _logger = logging.getLogger("WooCommerce")
 
@@ -19,7 +17,6 @@ class WooProcessImportExport(models.TransientModel):
 
     json_price_list = fields.Text(string="Json List Price", required=False, )
 
-
     def execute(self):
         if self.woo_operation == "expor_list_price":
             self.woo_export_expor_list_price()
@@ -30,25 +27,22 @@ class WooProcessImportExport(models.TransientModel):
                 'view_mode': 'form',
                 'res_model': 'woo.process.import.export',
                 'target': 'new',
-                'context': {'default_json_price_list': self.json_price_list,'default_woo_operation': "expor_list_price",'default_woo_instance_id': self.woo_instance_id.id}
+                'context': {'default_json_price_list': self.json_price_list,
+                            'default_woo_operation': "expor_list_price",
+                            'default_woo_instance_id': self.woo_instance_id.id}
             }
 
-
-
-
-
-
     def woo_export_expor_list_price(self):
-        json_final=[]
-        pricelist=self.env["woo.instance.ept"].search([],limit=1).woo_pricelist_id
-        woo_products_ids= self.env['woo.product.template.ept'].search([])
+        json_final = []
+        pricelist = self.env["woo.instance.ept"].search([], limit=1).woo_pricelist_id
+        woo_products_ids = self.env['woo.product.template.ept'].search([])
 
-
-        name=""
-        sku=False
+        name = ""
+        sku = False
         for woo_p in woo_products_ids:
-            item_ids=self.env['product.pricelist.item'].search([('product_tmpl_id','=',woo_p.product_tmpl_id.id)])
-            data= """
+            item_ids = self.env['product.pricelist.item'].search([('product_tmpl_id', '=', woo_p.product_tmpl_id.id)],
+                                                                 order="min_quantity")
+            data = """
                         {
                           "type": "package",
                           "filters": [
@@ -111,7 +105,6 @@ class WooProcessImportExport(models.TransientModel):
                      }
                         """
 
-
             # for r in pricelist.item_ids:
             #     sku=False
             #     if r.applied_on == '1_product':
@@ -124,21 +117,21 @@ class WooProcessImportExport(models.TransientModel):
             #         sku= r.product_id.default_code
             #     if sku and woo_product_obj:
 
-
             res = json.loads(data)
+            f = 1
             for i_id in item_ids:
+                if i_id.min_quantity == 0 and i_id.fixed_price == 0:
+                    continue
                 _logger.error(str(i_id.name))
-                res["bulk_adjustments"]["ranges"].append({ 'to': i_id.min_quantity,'value': i_id.fixed_price})
+                res["bulk_adjustments"]["ranges"].append(
+                    {'from': f, 'to': i_id.min_quantity, 'value': i_id.fixed_price})
+                f = i_id.min_quantity + 1
 
-
-
-
-
-            res['filters'][0]['value'][0]=woo_p.product_tmpl_id.default_code
-            res["title"]=woo_p.display_name
-            #res["bulk_adjustments"]["ranges"].extend(ranges)
-            #res=json.dumps(res, indent=4, sort_keys=True)
+            res['filters'][0]['value'][0] = woo_p.product_tmpl_id.default_code
+            res["title"] = woo_p.display_name
+            # res["bulk_adjustments"]["ranges"].extend(ranges)
+            # res=json.dumps(res, indent=4, sort_keys=True)
             json_final.append(res)
 
-        self.json_price_list=json_final
+        self.json_price_list = json_final
         _logger.error(str(json_final))
