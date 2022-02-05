@@ -129,6 +129,7 @@ class WooProcessImportExport(models.TransientModel):
             #     if sku and woo_product_obj:
 
             for i_id in item_ids:
+                _logger.error(str(i_id.name))
                 res["bulk_adjustments"]["ranges"].append({ 'from': i_id.min_quantity,'value': i_id.fixed_price})
 
 
