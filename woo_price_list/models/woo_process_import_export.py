@@ -133,6 +133,7 @@ class WooProcessImportExport(models.TransientModel):
                 range.update({ 'from': i_id.min_quantity})
                 range.update({ 'value': i_id.fixed_price})
                 ranges.append(range)
+            _logger.error(str(ranges))
 
             res = json.loads(data)
 
