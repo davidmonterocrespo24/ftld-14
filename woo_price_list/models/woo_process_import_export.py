@@ -30,7 +30,7 @@ class WooProcessImportExport(models.TransientModel):
                 'view_mode': 'form',
                 'res_model': 'woo.process.import.export',
                 'target': 'new',
-                'context': {'default_json_price_list': self.json_price_list,'default_woo_operation': "expor_list_price"}
+                'context': {'default_json_price_list': self.json_price_list,'default_woo_operation': "expor_list_price",'default_woo_instance_id': self.woo_instance_id.id}
             }
 
 
@@ -128,20 +128,18 @@ class WooProcessImportExport(models.TransientModel):
             #         sku= r.product_id.default_code
             #     if sku and woo_product_obj:
             range={}
-            ranges=[]
             for i_id in item_ids:
                 range.update({ 'from': i_id.min_quantity})
                 range.update({ 'value': i_id.fixed_price})
-                ranges.append(range)
-            _logger.error(str(ranges))
+                res["bulk_adjustments"]["ranges"].append(range)
+                _logger.error(str(range))
 
             res = json.loads(data)
 
 
             res['filters'][0]['value'][0]=woo_p.product_tmpl_id.default_code
             res["title"]=woo_p.display_name
-            res["bulk_adjustments"]["ranges"]=ranges
-            res=json.dumps(res, indent=4, sort_keys=True)
+            #res=json.dumps(res, indent=4, sort_keys=True)
             json_final.append(res)
 
         self.json_price_list=json_final
