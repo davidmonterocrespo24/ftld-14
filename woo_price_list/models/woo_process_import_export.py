@@ -47,7 +47,7 @@ class WooProcessImportExport(models.TransientModel):
         name=""
         sku=False
         for woo_p in woo_products_ids:
-            item_ids=self.env['product.pricelist.item'].search([('product_tmpl_id','=',woo_p.id)])
+            item_ids=self.env['product.pricelist.item'].search([('product_tmpl_id','=',woo_p.product_tmpl_id.id)])
             data= """
                         {
                           "type": "package",
