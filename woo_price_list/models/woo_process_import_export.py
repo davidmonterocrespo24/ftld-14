@@ -134,7 +134,7 @@ class WooProcessImportExport(models.TransientModel):
                 # res=json.dumps(res, indent=4, sort_keys=True)
                 json_final.append(res)
             else:
-                for woo_pv_id in woo_p.woo_products_ids:
+                for woo_pv_id in woo_p.woo_product_ids:
                     item_ids = self.env['product.pricelist.item'].search([('product_id', '=', woo_pv_id.product_id.id)],
                                                                          order="min_quantity")
                     data = """
