@@ -224,7 +224,7 @@ class WooProcessImportExport(models.TransientModel):
 
 
 
-        self.json_price_list = json_final
+        self.json_price_list = json.dumps(json_final, indent=4)
         _logger.error(str(json_final))
         self.send_to_wordpress(json_final)
 
