@@ -244,7 +244,7 @@ class WooProcessImportExport(models.TransientModel):
                 'wdp-import-data-reset-rules': 1,
                 'wdp-import': '',
                 'wdp-import-type': 'rules'   ,
-                'wdp-import-data':json_final}
+                'wdp-import-data':"""+""".replace('+',str(json_final))}
             _logger.error(data_json)
             json_resp=s.post(self.woo_instance_id.woo_host+'/wp-admin/admin.php?page=wdp_settings&tab=tools', headers=headers, data=data_json,verify=False)
 
