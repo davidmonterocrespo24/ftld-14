@@ -246,7 +246,239 @@ class WooProcessImportExport(models.TransientModel):
                 'wdp-import-type': 'rules'   ,
                 'wdp-import-data':'',
             }
-            data_json['wdp-import-data']=json_final
+            data_json['wdp-import-data']=[
+                {
+                    "type": "single_item",
+                    "rule_type": "common",
+                    "filters": [
+                        {
+                            "qty": 1,
+                            "type": "product_sku",
+                            "method": "in_list",
+                            "value": [
+                                "AS-2m-Go-Al-00730"
+                            ],
+                            "product_exclude": {
+                                "on_wc_sale": "",
+                                "already_affected": "",
+                                "backorder": "",
+                                "values": []
+                            }
+                        }
+                    ],
+                    "title": "[AS-2m-Go-Al-00730] ASCERA01 (2ml, Gold)",
+                    "priority": "",
+                    "enabled": "on",
+                    "sortable_blocks_priority": [
+                        "roles",
+                        "bulk-adjustments"
+                    ],
+                    "additional": {
+                        "conditions_relationship": "and",
+                        "is_replace": "",
+                        "replace_name": "",
+                        "is_replace_free_products_with_discount": "",
+                        "free_products_replace_name": "",
+                        "is_replace_auto_add_products_with_discount": "",
+                        "auto_add_products_replace_name": "",
+                        "sortable_apply_mode": "consistently"
+                    },
+                    "conditions": [],
+                    "cart_adjustments": [],
+                    "limits": [],
+                    "bulk_adjustments": {
+                        "type": "bulk",
+                        "qty_based": "not",
+                        "discount_type": "price__fixed",
+                        "ranges": [
+                            {
+                                "from": 1,
+                                "to": 20,
+                                "value": 500
+                            },
+                            {
+                                "from": 21,
+                                "to": 50,
+                                "value": 200
+                            }
+                        ],
+                        "table_message": ""
+                    },
+                    "role_discounts": [],
+                    "get_products": {
+                        "repeat": "-1",
+                        "repeat_subtotal": ""
+                    },
+                    "auto_add_products": {
+                        "repeat": "-1",
+                        "repeat_subtotal": ""
+                    },
+                    "options": {
+                        "apply_to": "expensive",
+                        "repeat": -1
+                    },
+                    "advertising": {
+                        "discount_message": "",
+                        "long_discount_message": "",
+                        "sale_badge": ""
+                    },
+                    "version": "4.0.2"
+                },
+                {
+                    "type": "single_item",
+                    "rule_type": "common",
+                    "filters": [
+                        {
+                            "qty": 1,
+                            "type": "product_sku",
+                            "method": "in_list",
+                            "value": [
+                                "La-Al-00702"
+                            ],
+                            "product_exclude": {
+                                "on_wc_sale": "",
+                                "already_affected": "",
+                                "backorder": "",
+                                "values": []
+                            }
+                        }
+                    ],
+                    "title": "Laptop3",
+                    "priority": "",
+                    "enabled": "on",
+                    "sortable_blocks_priority": [
+                        "roles",
+                        "bulk-adjustments"
+                    ],
+                    "additional": {
+                        "conditions_relationship": "and",
+                        "is_replace": "",
+                        "replace_name": "",
+                        "is_replace_free_products_with_discount": "",
+                        "free_products_replace_name": "",
+                        "is_replace_auto_add_products_with_discount": "",
+                        "auto_add_products_replace_name": "",
+                        "sortable_apply_mode": "consistently"
+                    },
+                    "conditions": [],
+                    "cart_adjustments": [],
+                    "limits": [],
+                    "bulk_adjustments": {
+                        "type": "bulk",
+                        "qty_based": "not",
+                        "discount_type": "price__fixed",
+                        "ranges": [
+                            {
+                                "from": 1,
+                                "to": 12,
+                                "value": 350
+                            },
+                            {
+                                "from": 13,
+                                "to": 24,
+                                "value": 300
+                            },
+                            {
+                                "from": 25,
+                                "to": 32,
+                                "value": 275
+                            }
+                        ],
+                        "table_message": ""
+                    },
+                    "role_discounts": [],
+                    "get_products": {
+                        "repeat": "-1",
+                        "repeat_subtotal": ""
+                    },
+                    "auto_add_products": {
+                        "repeat": "-1",
+                        "repeat_subtotal": ""
+                    },
+                    "options": {
+                        "apply_to": "expensive",
+                        "repeat": -1
+                    },
+                    "advertising": {
+                        "discount_message": "",
+                        "long_discount_message": "",
+                        "sale_badge": ""
+                    },
+                    "version": "4.0.2"
+                },
+                {
+                    "type": "single_item",
+                    "rule_type": "common",
+                    "filters": [
+                        {
+                            "qty": 1,
+                            "type": "product_sku",
+                            "method": "in_list",
+                            "value": [
+                                "2343567"
+                            ],
+                            "product_exclude": {
+                                "on_wc_sale": "",
+                                "already_affected": "",
+                                "backorder": "",
+                                "values": []
+                            }
+                        }
+                    ],
+                    "title": "Producto price list",
+                    "priority": "",
+                    "enabled": "on",
+                    "sortable_blocks_priority": [
+                        "roles",
+                        "bulk-adjustments"
+                    ],
+                    "additional": {
+                        "conditions_relationship": "and",
+                        "is_replace": "",
+                        "replace_name": "",
+                        "is_replace_free_products_with_discount": "",
+                        "free_products_replace_name": "",
+                        "is_replace_auto_add_products_with_discount": "",
+                        "auto_add_products_replace_name": "",
+                        "sortable_apply_mode": "consistently"
+                    },
+                    "conditions": [],
+                    "cart_adjustments": [],
+                    "limits": [],
+                    "bulk_adjustments": {
+                        "type": "bulk",
+                        "qty_based": "not",
+                        "discount_type": "price__fixed",
+                        "ranges": [
+                            {
+                                "from": 1,
+                                "to": 8,
+                                "value": 500
+                            }
+                        ],
+                        "table_message": ""
+                    },
+                    "role_discounts": [],
+                    "get_products": {
+                        "repeat": "-1",
+                        "repeat_subtotal": ""
+                    },
+                    "auto_add_products": {
+                        "repeat": "-1",
+                        "repeat_subtotal": ""
+                    },
+                    "options": {
+                        "apply_to": "expensive",
+                        "repeat": -1
+                    },
+                    "advertising": {
+                        "discount_message": "",
+                        "long_discount_message": "",
+                        "sale_badge": ""
+                    },
+                    "version": "4.0.2"
+                }
+            ]
             _logger.error(data_json)
             json_resp=s.post(self.woo_instance_id.woo_host+'/wp-admin/admin.php?page=wdp_settings&tab=tools', headers=headers, data=data_json,verify=False)
 
