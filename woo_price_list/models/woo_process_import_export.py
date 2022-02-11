@@ -43,6 +43,8 @@ class WooProcessImportExport(models.TransientModel):
             if woo_p.product_tmpl_id.default_code:
                 item_ids = self.env['product.pricelist.item'].search([('product_tmpl_id', '=', woo_p.product_tmpl_id.id)],
                                                                      order="min_quantity")
+                if not item_ids:
+                    continue
                 data = """
                             {
                               "type": "package",
@@ -137,6 +139,8 @@ class WooProcessImportExport(models.TransientModel):
                 for woo_pv_id in woo_p.woo_product_ids:
                     item_ids = self.env['product.pricelist.item'].search([('product_id', '=', woo_pv_id.product_id.id)],
                                                                          order="min_quantity")
+                    if not item_ids:
+                        continue
                     data = """
                             {
                               "type": "package",
