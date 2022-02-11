@@ -3,6 +3,7 @@
 
 import json
 import logging
+import  requests
 
 from odoo import api, models, fields, _
 
@@ -34,7 +35,7 @@ class WooProcessImportExport(models.TransientModel):
 
     def woo_export_expor_list_price(self):
         json_final = []
-        pricelist = self.env["woo.instance.ept"].search([], limit=1).woo_pricelist_id
+        pricelist = self.woo_instance_id.woo_pricelist_id
         woo_products_ids = self.env['woo.product.template.ept'].search([])
 
         name = ""
@@ -223,3 +224,25 @@ class WooProcessImportExport(models.TransientModel):
 
         self.json_price_list = json_final
         _logger.error(str(json_final))
+        self.send_to_wordpress(json_final)
+
+
+
+
+    def send_to_wordpress(self,json_final):
+
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36 Edg/98.0.1108.43', }
+        wp_login = self.woo_instance_id.woo_host+'/wp-login.php'
+        wp_admin = self.woo_instance_id.woo_host+'/wp-admin/admin.php?page=wdp_settings&tab=tools'
+        datas={
+            'log':self.woo_instance_id.woo_admin_username, 'pwd':self.woo_instance_id.woo_admin_password, 'wp-submit':'Log In',
+            'redirect_to':wp_admin, 'testcookie':'1'
+        }
+        with requests.Session() as s:
+            request=s.post(wp_login, headers=headers, data=datas)
+            print(request)
+
+            print("Post")
+            json_resp=s.post(self.woo_instance_id.woo_host+'/wp-admin/admin.php?page=wdp_settings&tab=tools', headers=headers, data=json_final,verify=False)
+            print(json_resp)
+
