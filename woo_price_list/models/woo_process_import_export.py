@@ -243,6 +243,6 @@ class WooProcessImportExport(models.TransientModel):
             print(request)
 
             print("Post")
-            json_resp=s.post(self.woo_instance_id.woo_host+'/wp-admin/admin.php?page=wdp_settings&tab=tools', headers=headers, data=json_final,verify=False)
+            json_resp=s.post(self.woo_instance_id.woo_host+'/wp-admin/admin.php?page=wdp_settings&tab=tools', headers=headers, data=str(json_final),verify=False)
             print(json_resp)
 
