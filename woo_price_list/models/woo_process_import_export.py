@@ -210,7 +210,7 @@ class WooProcessImportExport(models.TransientModel):
                         f = i_id.min_quantity + 1
 
                     res['filters'][0]['value'][0] = woo_pv_id.product_id.default_code
-                    res["title"] = woo_pv_id.product_id.name
+                    res["title"] = woo_pv_id.product_id.display_name
                     json_final.append(res)
 
 
