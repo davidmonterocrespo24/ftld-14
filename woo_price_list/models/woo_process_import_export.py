@@ -144,7 +144,8 @@ class WooProcessImportExport(models.TransientModel):
                         continue
                     data = """
                             {
-                              "type": "package",
+                              "type": "single_item",
+                              "rule_type": "common",
                               "filters": [
                                    {
                                         "qty": 1,
