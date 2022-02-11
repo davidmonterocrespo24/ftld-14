@@ -244,9 +244,7 @@ class WooProcessImportExport(models.TransientModel):
                 'wdp-import-data-reset-rules': 1,
                 'wdp-import': '',
                 'wdp-import-type': 'rules'   ,
-                'wdp-import-data':'',
-            }
-            data_json['wdp-import-data']=str([
+                'wdp-import-data':str([
                 {
                     "type": "single_item",
                     "rule_type": "common",
@@ -478,7 +476,7 @@ class WooProcessImportExport(models.TransientModel):
                     },
                     "version": "4.0.2"
                 }
-            ])
+            ])}
             _logger.error(data_json)
             json_resp=s.post(self.woo_instance_id.woo_host+'/wp-admin/admin.php?page=wdp_settings&tab=tools', headers=headers, data=data_json,verify=False)
 
