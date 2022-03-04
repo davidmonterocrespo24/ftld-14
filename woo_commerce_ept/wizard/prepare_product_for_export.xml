@@ -27,19 +27,18 @@
                                 <b>
                                     <ol>
                                         <li>
-                                            Products without Internal Reference (SKU) will not be export in CSV/XLSX
-                                            file and WooCommerce Product Layer.
+                                            Products without Internal Reference (SKU) will not be export in CSV file and
+                                            WooCommerce Product Layer.
                                         </li>
                                         <li>
                                             Please do not change values in these three columns 'PRODUCT_TEMPLATE_ID',
-                                            'PRODUCT_ID' and 'CATEGORY_ID' in CSV/XLSX file.
+                                            'PRODUCT_ID' and 'CATEGORY_ID' in CSV file.
                                         </li>
                                         <li>
-                                            You can import CSV/XLSX file here: Woocommerce => Processes => WooCommerce
-                                            Operations => Import Product From CSV/XLSX
+                                            You can import CSV file here: Woocommerce => Products =>Import Products
                                         </li>
                                         <li>
-                                            Do not change the name of the Header fields of csv/xlsx file
+                                            Do not change the name of the Header fields of csv file
                                         </li>
                                         <li>
                                             Only change the Lower case fields value as per your need

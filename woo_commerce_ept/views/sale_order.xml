@@ -40,8 +40,6 @@
         <field name="inherit_id" ref="sale.view_sales_order_filter"/>
         <field name="arch" type="xml">
             <search>
-                <field name="woo_order_number" string="Woo Order Number"/>
-                <field name="woo_order_id" string="Woo Order Ref"/>
                 <filter string="Updated in Woo" name="order_status_updated" domain="[('updated_in_woo', '=', True)]"/>
                 <filter string="Not updated in Woo" name="order_status_not_updated"
                         domain="[('updated_in_woo', '!=', True)]"/>

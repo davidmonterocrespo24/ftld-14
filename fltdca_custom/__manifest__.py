@@ -24,11 +24,6 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'sql/restrict_mode_hash_table.sql',
-        'data/cron_data.xml',
-        'views/stock_picking_views.xml',
-        #"'views/purchase_views.xml',
-        'report/report_tracking_ref_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

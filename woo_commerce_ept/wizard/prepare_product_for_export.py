@@ -2,18 +2,17 @@
 # See LICENSE file for full copyright and licensing details.
 import base64
 import logging
-import io
+
 from csv import DictWriter
 from datetime import datetime
 from io import StringIO
 from _collections import OrderedDict
-from odoo.tools.misc import xlsxwriter
+
 from odoo import models, fields, _
 from odoo.exceptions import UserError
 from odoo.tools.mimetypes import guess_mimetype
 
 _logger = logging.getLogger("WooCommerce")
-
 
 class PrepareProductForExport(models.TransientModel):
     """
@@ -23,8 +22,8 @@ class PrepareProductForExport(models.TransientModel):
     _name = "woo.prepare.product.for.export.ept"
     _description = "WooCommerce Prepare Product For Export"
 
-    export_method = fields.Selection([("direct", "Export in WooCommerce Layer"),
-                                      ("csv", "Export in CSV file"), ("xlsx", "Export in XLSX file")], default="direct")
+    export_method = fields.Selection([("csv", "Export in CSV file"),
+                                      ("direct", "Export in WooCommerce Layer")], default="csv")
     woo_instance_id = fields.Many2one("woo.instance.ept")
     file_name = fields.Char(help="Name of CSV file.")
     csv_data = fields.Binary('CSV File', readonly=True, attachment=False)
@@ -48,80 +47,8 @@ class PrepareProductForExport(models.TransientModel):
 
         if self.export_method == "direct":
             return self.export_direct_in_woo(product_templates)
-        return self.export_product_file_create_in_woo(product_templates)
-
-    def export_product_file_create_in_woo(self, odoo_template_ids):
-        """
-        Create and download CSV/XLSX file for export product in WooCommerce.
-        :param variants: Odoo product product object
-        """
-        data = str()
-        templates_val = []
-        if self.export_method:
-            for odoo_template in odoo_template_ids:
-                if len(odoo_template.product_variant_ids.ids) == 1 and not odoo_template.default_code:
-                    continue
-                position = 0
-                for product in odoo_template.product_variant_ids.filtered(lambda variant: variant.default_code):
-                    val = self.prepare_row_for_csv(odoo_template, product, position)
-                    templates_val.append(val)
-                    position = 1
-
-            # Based on customer's selected file format apply to call method
-            method_name = "_export_{}".format(self.export_method)
-            if hasattr(self, method_name):
-                data = getattr(self, method_name)(templates_val)
-        self.write({'csv_data': data.get('file')})
-        return {
-            'type': 'ir.actions.act_url',
-            'url': '/web/content/?model=woo.prepare.product.for.export.ept&'
-                   'field=csv_data&download=true&id={}&filename={}'.format(self.id, data.get('file_name')),
-            'target': 'self',
-        }
-
-    def _export_csv(self, products):
-        """
-        This method use for export selected product in CSV file for Map product
-        Develop by : Meera Sidapara
-        Date : 02/12/2021
-        :param products: Selected product listing ids
-        :return: selected product data and file name
-        """
-        buffer = StringIO()
-        csv_writer = DictWriter(buffer, list(products[0].keys()), delimiter=',')
-        csv_writer.writer.writerow(list(products[0].keys()))
-        csv_writer.writerows(products)
-        buffer.seek(0)
-        file_data = buffer.read().encode("utf-8")
-        b_data = base64.b64encode(file_data)
-        filename = 'woo_product_export_{}_{}.csv'.format(self.id, datetime.now().strftime(
-            "%m_%d_%Y-%H_%M_%S"))
-        return {'file': b_data, 'file_name': filename}
-
-    def _export_xlsx(self, products):
-        """
-        This method use for export selected product in XLSX file for Map product
-        Develop by : Meera Sidapara
-        Date : 02/12/2021
-        :param products: Selected product listing ids
-        :return: selected product data and file name
-        """
-        output = io.BytesIO()
-        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-        worksheet = workbook.add_worksheet('Map Product')
-        header = list(products[0].keys())
-        header_format = workbook.add_format({'bold': True, 'font_size': 10})
-        general_format = workbook.add_format({'font_size': 10})
-        worksheet.write_row(0, 0, header, header_format)
-        index = 0
-        for product in products:
-            index += 1
-            worksheet.write_row(index, 0, list(product.values()), general_format)
-        workbook.close()
-        b_data = base64.b64encode(output.getvalue())
-        filename = 'woo_product_export_{}_{}.xlsx'.format(self.id, datetime.now().strftime(
-            "%m_%d_%Y-%H_%M_%S"))
-        return {'file': b_data, 'file_name': filename}
+        else:
+            return self.export_csv_file(product_templates)
 
     def export_direct_in_woo(self, product_templates):
         """ This method use to create/update Woo layer products.
@@ -141,7 +68,7 @@ class PrepareProductForExport(models.TransientModel):
             woo_template = self.create_update_woo_template(variant, woo_instance, woo_template_id, woo_category_dict)
 
             # For add template images in layer.
-            if isinstance(woo_template, int):
+            if isinstance(woo_template,int):
                 woo_template = woo_template_obj.browse(woo_template)
 
             self.create_woo_template_images(woo_template)
@@ -169,7 +96,7 @@ class PrepareProductForExport(models.TransientModel):
         product_template = variant.product_tmpl_id
 
         if product_template.attribute_line_ids and len(
-                product_template.attribute_line_ids.filtered(lambda x: x.attribute_id.create_variant == "always")) > 0:
+            product_template.attribute_line_ids.filtered(lambda x: x.attribute_id.create_variant == "always")) > 0:
             product_type = 'variable'
         else:
             product_type = 'simple'
@@ -228,6 +155,49 @@ class PrepareProductForExport(models.TransientModel):
             'name': variant.name,
         })
         return woo_variant_vals
+
+    def export_csv_file(self, odoo_template_ids):
+        """
+        This method is used for export the odoo products in csv file.
+        @author: Dipak Gogiya @Emipro Technologies Pvt. Ltd.
+        @return: CSV file.
+        Migration done by Haresh Mori @ Emipro on date 14 September 2020 .
+        """
+        buffer = StringIO()
+        delimiter = ','
+        field_names = ['template_name', 'product_name', 'product_default_code',
+                       'woo_product_default_code', 'product_description', 'sale_description',
+                       'PRODUCT_TEMPLATE_ID', 'PRODUCT_ID', 'CATEGORY_ID']
+        csv_writer = DictWriter(buffer, field_names, delimiter=delimiter)
+        csv_writer.writer.writerow(field_names)
+        rows = []
+        for odoo_template in odoo_template_ids:
+            if len(odoo_template.product_variant_ids.ids) == 1 and not odoo_template.default_code:
+                continue
+            position = 0
+            for product in odoo_template.product_variant_ids.filtered(lambda variant: variant.default_code != False):
+                row = self.prepare_row_for_csv(odoo_template, product, position)
+                rows.append(row)
+                position = 1
+        if not rows:
+            raise UserError(_('No data found to be exported.\n\nPossible Reasons:\n   - SKU(s) are not set properly.'))
+        csv_writer.writerows(rows)
+        buffer.seek(0)
+        file_data = buffer.read().encode()
+        self.write({
+            'csv_data': base64.encodebytes(file_data),
+            'file_name': 'export_product_',
+        })
+
+        return {
+            'name': 'CSV',
+            'type': 'ir.actions.act_url',
+            'url': "web/content/?model=woo.prepare.product.for.export.ept&id=" + str(
+                self.id) + "&filename_field=file_name&field=csv_data&download=true&filename"
+                           "=%s.csv" % (
+                       self.file_name + str(datetime.now().strftime("%d/%m/%Y:%H:%M:%S"))),
+            'target': 'self',
+        }
 
     def prepare_row_for_csv(self, odoo_template, product, position):
         """ This method use to prepare a template data row for export data in CSV file.
@@ -292,7 +262,7 @@ class PrepareProductForExport(models.TransientModel):
                         woo_cat_id = self.create_woo_category(list_categ_id.name, instance, parent_id)
                         woo_category_dict.update({(categ_id, instance): woo_cat_id.id})
                     if not parent_id.parent_id.id == woo_product_category.id and woo_product_categ.instance_id.id == \
-                            instance:
+                        instance:
                         woo_product_category.write({'parent_id': parent_id.id})
                         woo_category_dict.update({(categ_id, instance): parent_id.id})
         return woo_category_dict

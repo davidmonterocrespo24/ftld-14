@@ -308,24 +308,6 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Default Products" groups="woo_commerce_ept.group_woo_manager_ept"
-                              name="default_products">
-                            <group>
-                                <group>
-                                    <field name="shipping_product_id" domain="[('type','=','service')]"
-                                           required="1" string="Shipping Product"
-                                           options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
-                                    <field name="fee_product_id" domain="[('type','=','service')]"
-                                           required="1" string="Fee Product"
-                                           options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
-                                </group>
-                                <group>
-                                    <field name="discount_product_id" domain="[('type','=','service')]"
-                                           required="1" string="Discount Product"
-                                           options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
-                                </group>
-                            </group>
-                        </page>
                     </notebook>
                 </sheet>
             </form>

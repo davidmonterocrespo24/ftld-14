@@ -20,10 +20,6 @@ class WooProductTemplateEpt(models.Model):
     _order = 'product_tmpl_id'
     _description = "WooCommerce Product Template"
 
-    response = fields.Text(string="Response", required=False, )
-    slug = fields.Char(help="The slug is the URL-friendly version of the name. It is usually all "
-                            "lowercase and contains only letters, numbers, and hyphens.")
-
     @api.depends('woo_product_ids.exported_in_woo', 'woo_product_ids.variant_id')
     def _compute_total_sync_variants(self):
         """
@@ -586,7 +582,7 @@ class WooProductTemplateEpt(models.Model):
         @author: Dipak Gogiya @Emipro Technologies Pvt. Ltd.
         """
         attributes_data = []
-        total_pages = response.headers.get('x-wp-totalpages', 0) if response else 1
+        total_pages = response and response.headers.get('x-wp-totalpages') or 1
         if int(total_pages) >= 2:
             for page in range(2, int(total_pages) + 1):
                 try:
@@ -738,7 +734,7 @@ class WooProductTemplateEpt(models.Model):
                     start_page = instance.import_product_page_count
                 else:
                     product_queues += self.create_woo_product_queue(results, instance, common_log_id, import_all,
-                                                                    template_id)
+                                                                  template_id)
                 for page in range(start_page, int(total_pages) + 1):
                     instance.import_product_page_count = page
                     results = self.import_all_woo_products(instance, common_log_id, page)
@@ -1001,7 +997,7 @@ class WooProductTemplateEpt(models.Model):
             attribute_name = variation_attribute.get('name')
             for attribute in template_attributes:
                 if attribute.get('variation') and \
-                        attribute.get('name') and attribute.get('name').replace(" ", "-").lower() == attribute_name:
+                    attribute.get('name') and attribute.get('name').replace(" ", "-").lower() == attribute_name:
                     attribute_name = attribute.get('name')
                     break
             product_attribute = self.env["product.attribute"].get_attribute(attribute_name, "radio", "always", True)
@@ -1377,8 +1373,7 @@ class WooProductTemplateEpt(models.Model):
             _logger.info("Images Updated for Template {0}".format(woo_template.name))
         if variant_image:
             woo_template_image_id = template_images and template_images[0].get('id') or False
-            woo_product_image = self.update_woo_variant_image(variant_image, woo_template, woo_product, product_dict,
-                                                              woo_template_image_id)
+            woo_product_image = self.update_woo_variant_image(variant_image, woo_template, woo_product, product_dict, woo_template_image_id)
             all_woo_product_images = woo_product_image_obj.search([("woo_template_id", "=", woo_template.id),
                                                                    ("woo_variant_id", "=", woo_product.id)])
 
@@ -2282,6 +2277,12 @@ class WooProductTemplateEpt(models.Model):
             update_image = False
         for woo_template in woo_templates:
             _logger.info("Start the export woo product: '%s'", woo_template.name)
+            if woo_template.woo_categ_ids.parent_id:
+                woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id
+                if  woo_template.woo_categ_ids.parent_id.parent_id:
+                    woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id
+                    if  woo_template.woo_categ_ids.parent_id.parent_id.parent_id:
+                        woo_template.woo_categ_ids|=woo_template.woo_categ_ids.parent_id.parent_id.parent_id
             data = self.prepare_product_data(woo_template, publish, update_price, update_image, basic_detail,
                                              common_log_id, model_id)
             variants = data.get('variations') or []
@@ -2494,24 +2495,19 @@ class WooProductTemplateEpt(models.Model):
 
         created_at = response.get('date_created').replace('T', ' ')
         updated_at = response.get('date_modified').replace('T', ' ')
-        slug=response.get('slug')
 
         if template.product_variant_count == 1 and not template.attribute_line_ids:
             woo_product = woo_template.woo_product_ids
             woo_product.write({'variant_id': woo_tmpl_id,
                                'created_at': created_at or False, 'updated_at': updated_at or False,
-                               'exported_in_woo': True,
-                               'response':response,
-                               'slug':slug})
+                               'exported_in_woo': True})
         total_variants_in_woo = len(response_variations) if response_variations else 1
 
         tmpl_data = {
             'woo_tmpl_id': woo_tmpl_id, 'created_at': created_at or False,
             'updated_at': updated_at or False, 'exported_in_woo': True,
             'total_variants_in_woo': total_variants_in_woo,
-            "website_published": True if publish == 'publish' else False,
-            'response':response,
-            'slug':slug
+            "website_published": True if publish == 'publish' else False
         }
         woo_template.write(tmpl_data)
         return True
@@ -2532,13 +2528,9 @@ class WooProductTemplateEpt(models.Model):
         woo_product = woo_product_obj.search([('default_code', '=', variant_sku),
                                               ('woo_template_id', '=', woo_template.id),
                                               ('woo_instance_id', '=', woo_template.woo_instance_id.id)])
-        slug=response_variation.get('slug')
         response_variant_data = {
             'variant_id': variant_id, 'created_at': variant_created_at,
-            'updated_at': variant_updated_at, 'exported_in_woo': True,
-            'response':response_variation,
-            'slug':slug
-
+            'updated_at': variant_updated_at, 'exported_in_woo': True
         }
         woo_product and woo_product.write(response_variant_data)
         return True
@@ -2565,9 +2557,6 @@ class ProductProductEpt(models.Model):
     woo_is_manage_stock = fields.Boolean("Is Manage Stock?", default=True,
                                          help="Enable stock management at product level in WooCommerce")
     woo_image_ids = fields.One2many("woo.product.image.ept", "woo_variant_id")
-    response = fields.Text(string="Response", required=False, )
-    slug = fields.Char(help="The slug is the URL-friendly version of the name. It is usually all "
-                            "lowercase and contains only letters, numbers, and hyphens.")
 
     def toggle_active(self):
         """

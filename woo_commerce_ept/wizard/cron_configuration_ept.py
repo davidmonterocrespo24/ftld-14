@@ -14,7 +14,6 @@ _intervalTypes = {
     'minutes': lambda interval: relativedelta(minutes=interval),
 }
 
-
 class WooCronConfigurationEpt(models.TransientModel):
     """
     Common model for managing cron configuration.
@@ -58,21 +57,6 @@ class WooCronConfigurationEpt(models.TransientModel):
     woo_import_order_user_id = fields.Many2one('res.users',
                                                help="Responsible User for Auto imported orders.",
                                                default=lambda self: self.env.user)
-
-    # Auto Import Complete Order
-    woo_auto_import_complete_order = fields.Boolean("Auto Import Complete Order from Woo?",
-                                                    help="Imports complete orders at certain interval.")
-    woo_import_complete_order_interval_number = fields.Integer(help="Repeat every x.", default=10)
-    woo_import_complete_order_interval_type = fields.Selection([('minutes', 'Minutes'),
-                                                                ('hours', 'Hours'),
-                                                                ('days', 'Days'),
-                                                                ('weeks', 'Weeks'),
-                                                                ('months', 'Months')])
-    woo_import_complete_order_next_execution = fields.Datetime(
-        help="Next execution time of Auto Import Complete Order Cron.")
-    woo_import_complete_order_user_id = fields.Many2one('res.users',
-                                                        help="Responsible User for Auto imported complete orders.",
-                                                        default=lambda self: self.env.user)
     # Auto Update Order
     woo_auto_update_order_status = fields.Boolean(string="Auto Update Order Status in Woo?",
                                                   help="Automatically update order status to WooCommerce.")
@@ -97,7 +81,6 @@ class WooCronConfigurationEpt(models.TransientModel):
         instance = self.woo_instance_id
         self.woo_stock_auto_export = instance.woo_stock_auto_export if instance else False
         self.woo_auto_import_order = instance.auto_import_order if instance else False
-        self.woo_auto_import_complete_order = instance.auto_import_complete_order if instance else False
         self.woo_auto_update_order_status = instance.auto_update_order_status if instance else False
 
         inventory_cron = self.search_active_existing_cron('ir_cron_update_woo_stock_instance', instance)
@@ -115,15 +98,6 @@ class WooCronConfigurationEpt(models.TransientModel):
             self.woo_import_order_interval_type = import_order_cron.interval_type
             self.woo_import_order_next_execution = import_order_cron.nextcall
             self.woo_import_order_user_id = import_order_cron.user_id
-
-        import_complete_order_cron = self.search_active_existing_cron('ir_cron_woo_import_complete_order_instance',
-                                                                      instance)
-
-        if import_complete_order_cron:
-            self.woo_import_complete_order_interval_number = import_complete_order_cron.interval_number
-            self.woo_import_complete_order_interval_type = import_complete_order_cron.interval_type
-            self.woo_import_complete_order_next_execution = import_complete_order_cron.nextcall
-            self.woo_import_complete_order_user_id = import_complete_order_cron.user_id
 
         update_order_status_cron = self.search_active_existing_cron('ir_cron_woo_update_order_status_instance',
                                                                     instance)
@@ -156,7 +130,6 @@ class WooCronConfigurationEpt(models.TransientModel):
         if instance:
             values = {"woo_stock_auto_export": self.woo_stock_auto_export,
                       "auto_import_order": self.woo_auto_import_order,
-                      "auto_import_complete_order": self.woo_auto_import_complete_order,
                       "auto_update_order_status": self.woo_auto_update_order_status}
             instance.write(values)
             self.setup_woo_update_stock_cron(instance)
@@ -192,33 +165,9 @@ class WooCronConfigurationEpt(models.TransientModel):
                 import_order_cron = self.search_cron_with_xml_id('woo_commerce_ept.ir_cron_woo_import_order')
                 self.create_ir_model_record_for_cron(instance, import_order_cron, vals,
                                                      'ir_cron_woo_import_order_instance')
-        elif self.woo_auto_import_complete_order:
-            import_complete_order_cron = self.search_active_existing_cron('ir_cron_woo_import_complete_order_instance',
-                                                                          instance)
-            nextcall = datetime.now()
-            nextcall += _intervalTypes[self.woo_import_complete_order_interval_type](
-                self.woo_import_complete_order_interval_number)
-            vals = self.prepare_vals_for_cron(self.woo_import_complete_order_interval_number,
-                                              self.woo_import_complete_order_interval_type,
-                                              self.woo_import_complete_order_user_id)
-            vals.update({
-                'nextcall': self.woo_import_complete_order_next_execution or nextcall.strftime('%Y-%m-%d %H:%M:%S'),
-                'code': "model.import_woo_orders(%d,order_type=%s)" % (instance.id, '"completed"'),
-            })
-            if import_complete_order_cron:
-                import_complete_order_cron.write(vals)
-            else:
-                import_complete_order_cron = self.search_cron_with_xml_id(
-                    'woo_commerce_ept.ir_cron_woo_import_complete_order')
-                self.create_ir_model_record_for_cron(instance, import_complete_order_cron, vals,
-                                                     'ir_cron_woo_import_complete_order_instance')
         else:
             import_order_cron = self.search_active_existing_cron('ir_cron_woo_import_order_instance', instance)
             import_order_cron and import_order_cron.write({'active': False})
-
-            import_complete_order_cron = self.search_active_existing_cron('ir_cron_woo_import_complete_order_instance',
-                                                                          instance)
-            import_complete_order_cron and import_complete_order_cron.write({'active': False})
         return True
 
     def setup_woo_update_order_status_cron(self, instance):

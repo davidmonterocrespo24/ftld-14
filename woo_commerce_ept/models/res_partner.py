@@ -262,5 +262,4 @@ class ResPartner(models.Model):
             'state_id': state and state.id or False, 'country_id': country and country.id or False,
             'is_company': False, 'lang': instance.woo_lang_id.code,
         }
-        update_partner_vals = self.remove_special_chars_from_partner_vals(partner_vals)
-        return update_partner_vals
+        return partner_vals

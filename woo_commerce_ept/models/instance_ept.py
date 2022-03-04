@@ -190,8 +190,6 @@ class WooInstanceEpt(models.Model):
                                            help="Check if you want to automatically update stock levels from Odoo to "
                                                 "WooCommerce.")
     auto_import_order = fields.Boolean("Auto Import Order from Woo?", help="Imports orders at certain interval.")
-    auto_import_complete_order = fields.Boolean("Auto Import Complete Order from Woo?",
-                                                help="Imports complete orders at certain interval.")
     auto_update_order_status = fields.Boolean(string="Auto Update Order Status in Woo?",
                                               help="Automatically update order status to WooCommerce.")
     store_timezone = fields.Selection("_woo_tz_get", help="Timezone of Store for requesting data.")
@@ -234,7 +232,7 @@ class WooInstanceEpt(models.Model):
     import_order_after_date = fields.Datetime(help="Connector only imports those orders which have created after a "
                                                    "given date.", default=set_woo_import_after_date)
     import_product_page_count = fields.Integer(default=1, help="It will fetch products of WooCommerce from given "
-                                                               "page numbers.")
+                                                                       "page numbers.")
 
     def _kanban_woo_order_data(self):
         """
@@ -505,7 +503,7 @@ class WooInstanceEpt(models.Model):
         else:
             result = orders_of_all_time(self)
         order_ids = [data.get('id') for data in result]
-        view = self.env.ref('woo_commerce_ept.action_woo_orders').sudo().read()[0]
+        view = self.env.ref('woo_commerce_ept.action_woo_orders').read()[0]
         action = self.prepare_action(view, [('id', 'in', order_ids)])
         order_data.update({'order_count': len(order_ids), 'order_action': action})
         return order_data
@@ -553,7 +551,7 @@ class WooInstanceEpt(models.Model):
         else:
             result = shipped_order_of_all_time(shipped_query)
         order_ids = [data.get('id') for data in result]
-        view = self.env.ref('woo_commerce_ept.action_woo_orders').sudo().read()[0]
+        view = self.env.ref('woo_commerce_ept.action_woo_orders').read()[0]
         action = self.prepare_action(view, [('id', 'in', order_ids)])
         order_data.update({'order_count': len(order_ids), 'order_action': action})
         return order_data
@@ -572,7 +570,7 @@ class WooInstanceEpt(models.Model):
         result = self._cr.dictfetchall()
         if result:
             total_count = result[0].get('total_count')
-        view = self.env.ref('woo_commerce_ept.action_woo_product_template_exported_ept').sudo().read()[0]
+        view = self.env.ref('woo_commerce_ept.action_woo_product_template_exported_ept').read()[0]
         action = self.prepare_action(view, [('exported_in_woo', '=', True), ('woo_instance_id', '=', self.id)])
         product_data.update({'product_count': total_count, 'product_action': action})
         return product_data
@@ -590,7 +588,7 @@ class WooInstanceEpt(models.Model):
                          % self.id)
         result = self._cr.dictfetchall()
         customer_ids = [data.get('partner_id') for data in result]
-        view = self.env.ref('woo_commerce_ept.action_woo_partner').sudo().read()[0]
+        view = self.env.ref('woo_commerce_ept.action_woo_partner').read()[0]
         action = self.prepare_action(view, [('id', 'in', customer_ids), ('active', 'in', [True, False])])
         customer_data.update({'customer_count': len(customer_ids), 'customer_action': action})
         return customer_data
@@ -634,7 +632,7 @@ class WooInstanceEpt(models.Model):
         else:
             result = refund_of_all_time(refund_query)
         refund_ids = [data.get('id') for data in result]
-        view = self.env.ref('woo_commerce_ept.action_refund_woo_invoices_ept').sudo().read()[0]
+        view = self.env.ref('woo_commerce_ept.action_refund_woo_invoices_ept').read()[0]
         # [('woo_instance_id', '=', record_id)]
         action = self.prepare_action(view, [('id', 'in', refund_ids)])
         refund_data.update({'refund_count': len(refund_ids), 'refund_action': action})
@@ -673,7 +671,7 @@ class WooInstanceEpt(models.Model):
         Added on: 31/10/20
         :return: Woo operation action details
         """
-        view = self.env.ref('woo_commerce_ept.action_wizard_woo_instance_import_export_operations').sudo().read()[0]
+        view = self.env.ref('woo_commerce_ept.action_wizard_woo_instance_import_export_operations').read()[0]
         action = self.prepare_action(view, [])
         action.update({'context': {'default_woo_instance_id': record_id}})
         return action
@@ -687,7 +685,7 @@ class WooInstanceEpt(models.Model):
         Added on: 31/10/20
         :return: Woo report action details
         """
-        view = self.env.ref('woo_commerce_ept.woo_sale_report_action_dashboard').sudo().read()[0]
+        view = self.env.ref('woo_commerce_ept.woo_sale_report_action_dashboard').read()[0]
         action = self.prepare_action(view, [('woo_instance_id', '=', record_id)])
         action.update({'context': {'search_default_woo_instances': record_id, 'search_default_Sales': 1,
                                    'search_default_filter_date': 1}})
@@ -702,7 +700,7 @@ class WooInstanceEpt(models.Model):
         Added on: 31/10/20
         :return: Woo logs action details
         """
-        view = self.env.ref('woo_commerce_ept.action_common_log_book_instance_ept').sudo().read()[0]
+        view = self.env.ref('woo_commerce_ept.action_common_log_book_instance_ept').read()[0]
         return self.prepare_action(view, [('woo_instance_id', '=', record_id)])
 
     _sql_constraints = [('unique_host', 'unique(woo_host)',
@@ -735,7 +733,7 @@ class WooInstanceEpt(models.Model):
         auto_crons = ir_cron_obj.search([("name", "ilike", self.name), ("active", "=", True)])
         if auto_crons:
             auto_crons.write(deactivate)
-        self.woo_stock_auto_export = self.auto_update_order_status = self.auto_import_order = self.auto_import_complete_order = False
+        self.woo_stock_auto_export = self.auto_update_order_status = self.auto_import_order = False
         woo_webhook_obj.search([('instance_id', '=', self.id)]).unlink()
         self.create_woo_product_webhook = self.create_woo_order_webhook = self.create_woo_customer_webhook = \
             self.create_woo_coupon_webhook = False

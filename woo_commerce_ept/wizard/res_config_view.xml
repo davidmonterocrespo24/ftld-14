@@ -347,8 +347,7 @@
                                         <field name="woo_sync_images_with_product" widget="boolean_toggle"/>
                                     </div>
                                     <div class="o_setting_right_pane">
-                                        <label for="woo_sync_images_with_product"
-                                               string="WooCommerce Sync/Import Images?"/>
+                                        <label for="woo_sync_images_with_product" string="WooCommerce Sync/Import Images?"/>
                                         <div class="text-muted">
                                             If checked, it will automatically import product image, while product import
                                             process else not.
@@ -361,8 +360,7 @@
                                         <field name="woo_sync_price_with_product" widget="boolean_toggle"/>
                                     </div>
                                     <div class="o_setting_right_pane">
-                                        <label for="woo_sync_price_with_product"
-                                               string="WooCommerce Sync/Import Product Price?"/>
+                                        <label for="woo_sync_price_with_product" string="WooCommerce Sync/Import Product Price?"/>
                                         <div class="text-muted">
                                             If checked, it will set the product price in the pricelist configured under
                                             the given instance, while product import process else not.
@@ -453,7 +451,7 @@
                                         <div class="mt16">
                                             <field name="woo_import_order_status_ids" widget="many2many_tags"
                                                    options="{'no_create':True,'no_create_edit': True}"
-                                                   class="oe_inline"/>
+                                                   class="oe_inline" />
                                         </div>
                                     </div>
                                 </div>
@@ -549,8 +547,7 @@
                                     <div class="content-group">
                                         <div class="mt16">
                                             <field name="woo_import_order_after_date"
-                                                   class="oe_inline"
-                                                   attrs="{'required':[('woo_instance_id','!=',False)]}"/>
+                                                   class="oe_inline" attrs="{'required':[('woo_instance_id','!=',False)]}"/>
                                         </div>
                                     </div>
                                 </div>
@@ -684,19 +681,6 @@
                                 <div class="content-group">
                                     <div class="mt16">
                                         <field name="last_inventory_update_time" class="oe_inline"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6 o_setting_box">
-                            <div class="o_setting_right_pane">
-                                <label for="woo_last_completed_order_import_date"/>
-                                <div class="text-muted">
-                                    Set the last import complete order date.
-                                </div>
-                                <div class="content-group">
-                                    <div class="mt16">
-                                        <field name="woo_last_completed_order_import_date" class="oe_inline"/>
                                     </div>
                                 </div>
                             </div>
